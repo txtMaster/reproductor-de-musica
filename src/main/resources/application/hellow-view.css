@@ -1,0 +1,35 @@
+.boton-rojo{
+    /*-fx-background-color:gray;*/
+}
+.root{
+    -fx-font-size:10px;
+}
+
+#toggleBtn{
+    -fx-font-size:2em;
+    -fx-graphic-text-gap:1em;
+}
+.image-view{
+    -fx-fit-height:1em;
+    -fx-preserve-ratio:true;
+    -fx-rotate: 0;
+    transition-property: -fx-rotate;
+    transition-duration: 0.2s;
+}
+
+#toggleBtn:selected .image-view{
+    -fx-rotate:90;
+}
+
+#myimage{
+    -fx-image: url(/resources/png/perilla.png);
+}
+
+#testSP{
+    -fx-background-color:green;
+    -fx-max-width:10;
+    -fx-max-height:10;
+}
+#perilla{
+
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+<?import components.BotonRojo?>
+<?import components.SVGUrl?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import java.net.URL?>
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="application.HelloController">
+    <children>
+
+        <Label fx:id="welcomeText"/>
+        <Button text="Hello!" onAction="#onHelloButtonClick"/>
+        <BotonRojo/>
+        <ToggleButton
+                text="toggle button"
+                fx:id="toggleBtn"
+                style="-fx-background-color:red;">
+            <graphic>
+
+                <ImageView fx:id="myimage">
+                    <Image url="@../../png/perilla.png"/>
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+    </children>
+    <stylesheets>
+        <URL value="@hellow-view.css" />
+    </stylesheets>
+</VBox>

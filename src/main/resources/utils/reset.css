@@ -1,0 +1,27 @@
+.split-pane-divider, .divider-hidden {
+    -fx-background-insets: 0;
+    -fx-pref-width: 3px;
+}
+.split-pane{
+    -fx-border-color:transparent;
+    -fx-background-insets: 0;
+}
+.split-pane{
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-spacing:0;
+}
+.root{
+    -fx-pref-height: -1;
+    -fx-pref-width: -1;
+}
+.scroll-pane,.scroll-pane .viewport{
+    -fx-background-color:transparent;
+}
+.split-pane .divider{
+
+}
+.scroll-pane{
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+}

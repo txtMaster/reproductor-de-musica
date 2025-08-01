@@ -1,0 +1,82 @@
+/*
+.root{
+    main-color: hsb(0,0%,11%);
+    main-color-saturated: hsb(20,18%,93%);
+    main-color-lighten-1: derive(main-color,10%);
+    main-color-lighten-2: derive(main-color,40%);
+    main-color-lighten-3: derive(main-color,60%);
+    main-color-lighten-4: derive(main-color,80%);
+    main-color-lighten-5: derive(main-color,95%);
+
+    main-color-darken-1: derive(main-color,-10%);
+    main-color-darken-2: derive(main-color,-25%);
+    main-color-darken-3: derive(main-color,-45%);
+    main-color-darken-4: derive(main-color,-70%);
+    main-color-darken-5: derive(main-color,-95%);
+}
+*/
+.root{
+    main-color-saturated: hsb(20,18%,93%);
+
+    main-color: hsb(0,0%,11%);
+    main-color-lighten-0: main-color;
+    main-color-lighten-1: hsb(0,0%,13%);
+    main-color-lighten-2: hsb(0,0%,15%);
+    main-color-lighten-3: hsb(0,0%,16%);
+    main-color-lighten-4: hsb(0,0%,20%);
+    main-color-lighten-5: hsb(0,0%,26%);
+    main-color-lighten-6: hsb(0,0%,34%);
+    main-color-lighten-7: hsb(0,0%,58%);
+    main-color-lighten-8: hsb(0,0%,72%);
+    main-color-lighten-9: hsb(0,0%,92%);
+
+    main-color-darken-0: main-color;
+    main-color-darken-1: derive(main-color,-10%);
+    main-color-darken-2: derive(main-color,-25%);
+    main-color-darken-3: derive(main-color,-45%);
+    main-color-darken-4: derive(main-color,-70%);
+    main-color-darken-5: derive(main-color,-95%);
+}
+
+.split-pane-divider{
+    -fx-background-color: main-color-lighten-1;
+    transition-property: -fx-opacity;
+    transition-duration: 0.1s;
+    -fx-pref-width: 2px;
+    -fx-opacity:0.3;
+}
+
+.split-pane:horizontal .split-pane-divider{
+    -fx-background-color:linear-gradient(
+        to top,
+        transparent 0%,
+        transparent 40%,
+        main-color-lighten-4 40%,
+        main-color-lighten-4 60%,
+        transparent 60%
+    );
+}
+.split-pane-divider:hover{
+    -fx-opacity: 1;
+}
+
+.split-pane:horizontal .split-pane-divider{
+    -fx-background-color:linear-gradient(
+        to top,
+        transparent 0%,
+        transparent 40%,
+        main-color-lighten-2 40%,
+        main-color-lighten-2 60%,
+        transparent 60%
+    );
+}
+.split-pane:vertical .split-pane-divider{
+    -fx-background-color:linear-gradient(
+        to left,
+        transparent 0%,
+        transparent 40%,
+        main-color-lighten-2 40%,
+        main-color-lighten-2 60%,
+        transparent 60%
+    );
+}

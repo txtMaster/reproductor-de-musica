@@ -1,0 +1,167 @@
+.root{
+    -font-size:20px;
+    -fx-background-color:main-color;
+    -fx-border-radius:1em;
+    -fx-pref-height:550px;
+    -fx-pref-width:700px;
+    -fx-padding:8px;
+}
+
+#cover{
+    -fx-background-color: main-color-lighten-4;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: auto 100%;
+    -fx-background-radius: 20px 20px 20px 20px;
+    -fx-border-radius: 20px 20px 20px 20px;
+
+}
+
+#coverRectangleClip{
+    -width:20px !important;
+    -height:200px;
+}
+
+#player{
+    -fx-background-radius: 1em;
+    -fx-background-color: main-color-lighten-2;
+}
+
+#player .details{
+    -fx-padding: 1em;
+    -fx-alignment: center-left;
+    -fx-min-width:0;
+    -fx-pref-width:0;
+}
+#player .details .timeAndButtons{
+    -fx-spacing: 2em;
+}
+#player .time{
+    -fx-font-size:1.5em;
+    -fx-alignment: center-left;
+}
+#player .time .label{
+    -fx-text-fill:gray;
+}
+#player .buttons{
+    -fx-alignment:center;
+    -fx-spacing:1em;
+}
+#player .buttons .button{
+    -fx-background-color:transparent;
+    -fx-background:transparent;
+}
+
+.details{
+
+}
+#songName{
+    -fx-font-size: 3em;
+    -fx-text-fill:main-color-lighten-9;
+    -fx-stroke:transparent;
+    -fx-stroke-width:0;
+}
+#artistName{
+    -fx-font-size: 2em;
+    -fx-text-fill:main-color-lighten-8;
+}
+
+.main{
+    -fx-background-color: transparent;
+    -fx-view-order:1;
+    -fx-padding: 0;
+    -fx-spacing:0;
+}
+
+
+.playerButtons{
+    -fx-fill-height:true;
+    -fx-alignment:center;
+    -fx-view-order:-1;
+    -fx-spacing: 1em;
+    -fx-padding: 1em;
+    -fx-background-color: main-color-lighten-1;
+    -fx-effect: dropshadow(
+        three-pass-box,
+        main-color,
+        2, 0, 0, 0
+    );
+}
+.playerButtons Button {
+    -fx-background-color: main-color-lighten-1;
+    -fx-background:transparent;
+    -fx-font-size:1em;
+    -fx-background-radius: 20px;
+    -fx-text-fill: main-color-darken-3;
+
+    transition-property:-fx-scale-x, -fx-scale-y;
+    transition-duration: 0.2s;
+    -fx-border-color:main-color;
+    -fx-border-width:2;
+    -fx-border-radius:20px;
+    -fx-effect: dropshadow(
+            three-pass-box,
+            main-color,
+            5, 0, -2, 0
+        );
+}
+
+.playerButtons Button:hover {
+    -fx-scale-y:1.1;
+    -fx-scale-x:1.1;
+}
+
+Button.pause{
+    -fx-background-color:main-color-saturated;
+    -fx-text-fill: main-color-lighten-3;
+    -fx-font-size:1.5em;
+    -fx-border-width:0;
+}
+
+#imageBtnPrevious,#imageBtnNext,#imagePause{
+    -fx-preserve-ratio:true;
+    -fx-fit-width:3em;
+    -fx-smooth:true;
+}
+
+#imageBtnPrevious{
+    -fx-image:url(../../../png/next.png);
+    -fx-rotate:180;
+}
+#imageBtnNext{
+    -fx-image:url(../../../png/next.png);
+}
+#imagePause{
+    -fx-image:url(../../../png/play.png);
+}
+#pause.playing #imagePause{
+    -fx-image:url(../../../png/pause.png) !important;
+}
+.list{
+    -fx-background:transparent;
+    -fx-background-color:main-color-darken-1;
+
+}
+.playing{
+    -fx-background-color:transparent;
+}
+#secciones{
+    -fx-background-color:main-color-lighten-1;
+}
+
+#secciones SVGUrl{
+    -fx-fill:red;
+}
+
+#folders .toggle-button{
+    -fx-text-fill: main-color-lighten-5;
+    -fx-pref-width:Infinity;
+    -fx-background-color:transparent;
+}
+
+#folders .toggle-button:selected{
+    -fx-background-color:main-color-lighten-3;
+}
+#pestanas{
+    
+}

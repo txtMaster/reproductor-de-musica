@@ -1,0 +1,72 @@
+.resizable{
+    -fx-pref-height: -1;
+    -fx-pref-width: -1;
+}
+.minimizable{
+    -fx-min-height:0px;
+    -fx-min-width:0px;
+}
+
+.level-1,
+.wrapper-superior,
+.wrapper-izquierdo,
+.wrapper-derecho{
+    -fx-background-radius:20px;
+    -fx-background-color:transparent;
+}
+.wrapper-superior{
+    -fx-padding: 0px 0px 4px 0px;
+}
+.wrapper-izquierdo{
+    -fx-padding: 4px 4px 0px 0px;
+}
+.wrapper-derecho{
+    -fx-padding:4px 0px 0px 4px;
+}
+
+.level-1 .label{
+    -fx-text-fill: main-color-lighten-7;
+}
+.level-2{
+    -fx-padding:4px;
+    -fx-background-radius: 8px;
+    -fx-background-color:main-color-lighten-2;
+}
+.level-2{
+    -fx-spacing:0.2em;
+    -fx-padding:0.5em;
+}
+.level-2 .label{
+    -fx-text-fill: main-color-lighten-7;
+}
+.level-2 .toggle-button{
+    -fx-background-radius:20px;
+    -fx-text-fill: main-color-lighten-7;
+}
+
+
+.level-3{
+    -fx-padding:2px;
+    -fx-background-radius:26px;
+    -fx-background-color:main-color-lighten-2;
+}
+.bg-none{
+    -fx-background-color:transparent;
+}
+
+VBox.fit-child > *{
+    -fx-max-width: Infinity;
+}
+HBox.fit-child > *{
+    -fx-max-height: Infinity;
+}
+
+
+.p1{-fx-padding:0.12em;}
+.p2{-fx-padding:0.24em;}
+.p3{-fx-padding:0.5em;}
+.p4{-fx-padding:1em;}
+
+.test{
+    -fx-background-color:red;
+}
