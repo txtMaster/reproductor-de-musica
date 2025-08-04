@@ -25,3 +25,8 @@
     -fx-fit-to-width: true;
     -fx-fit-to-height: true;
 }
+.slider .thumb{
+    -fx-translate-y: 50%;
+    -fx-scale-x:1.1;
+    -fx-scale-y:1.1;
+}

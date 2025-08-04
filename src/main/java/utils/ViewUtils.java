@@ -4,6 +4,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.Region;
@@ -12,7 +13,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ViewUtils {
     static final int RESIZE_MARGIN = 20;
@@ -95,6 +97,38 @@ public class ViewUtils {
         clip.setArcWidth(40);
         clip.setArcHeight(40);
         root.setClip(clip);
+    }
+    public static List<Color> getDominantColors(Image image){
+        PixelReader reader = image.getPixelReader();
+        Map<Color,Integer> colors = new HashMap<>();
+
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        Map<Color, Integer> colorCount = new HashMap<>();
+        for (int y = 0; y < height; y += 4) {
+            for (int x = 0; x < width; x += 4) {
+                Color color = reader.getColor(x, y);
+
+                // Opcional: redondear colores para agrupar tonos similares
+                color = new Color(
+                        Math.round(color.getRed() * 10) / 10.0,
+                        Math.round(color.getGreen() * 10) / 10.0,
+                        Math.round(color.getBlue() * 10) / 10.0,
+                        1.0
+                );
+
+                colorCount.put(color, colorCount.getOrDefault(color, 0) + 1);
+            }
+        }
+        List<Map.Entry<Color, Integer>> sorted = colorCount.entrySet()
+                .stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .limit(2)
+                .toList();
+
+        Color mostCommon = sorted.get(0).getKey();
+        Color secondCommon = sorted.size() > 1 ? sorted.get(1).getKey() : mostCommon;
+        return Arrays.stream(new Color[]{mostCommon,secondCommon}).toList();
     }
 }
 

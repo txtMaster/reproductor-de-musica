@@ -1,4 +1,5 @@
 .root{
+    -fx-font-family:"Inter Regular";
     -font-size:20px;
     -fx-background-color:main-color;
     -fx-border-radius:1em;
@@ -8,7 +9,8 @@
 }
 
 #cover{
-    -fx-background-color: main-color-lighten-4;
+    -fx-background-color:main-color-lighten-4;
+    -fx-background-image: url(../../../png/perilla.png);
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: auto 100%;
@@ -35,6 +37,34 @@
 }
 #player .details .timeAndButtons{
     -fx-spacing: 2em;
+
+}
+
+#player #timeStatus{
+    bg-color: main-color-lighten-4;
+    main-color:orange;
+    main-size:0.5em;
+    -fx-pref-height: 3em;
+}
+
+#player #timeStatus .track {
+    -fx-background-color: linear-gradient(to right, main-color 50%, bg-color 50%);
+    -fx-pref-height:main-size;
+}
+#player #timeStatus .thumb{
+    -fx-background-color: main-color;
+    -fx-pref-width: main-size;
+    -fx-pref-height: main-size;
+    transition-property: -fx-scale-x,fx-scale-y;
+    transition-duration: 0.1s, 0.1s;
+    transition-timing-function:linear,linear;
+}
+#player #timeStatus:hover .thumb{
+    -fx-scale-x:1.4;
+    -fx-scale-y:1.4;
+}
+#player #timeStatus .axis{
+    -fx-tick-label-fill: green;
 }
 #player .time{
     -fx-font-size:1.5em;
@@ -146,7 +176,7 @@ Button.pause{
     -fx-background-color:transparent;
 }
 #secciones{
-    -fx-background-color:main-color-lighten-1;
+    -fx-border-radius:20px !important;
 }
 
 #secciones SVGUrl{
@@ -154,13 +184,15 @@ Button.pause{
 }
 
 #folders .toggle-button{
-    -fx-text-fill: main-color-lighten-5;
+    -fx-text-fill: main-color-lighten-8;
     -fx-pref-width:Infinity;
     -fx-background-color:transparent;
+    -fx-min-width:0;
+    -fx-alignment:center-left;
 }
 
 #folders .toggle-button:selected{
-    -fx-background-color:main-color-lighten-3;
+    -fx-background-color:main-color-lighten-4;
 }
 #pestanas{
     

@@ -13,6 +13,7 @@ module libraries.demo {
     requires javafx.media;
     requires uk.co.caprica.vlcj;
     requires jaudiotagger;
+    requires java.desktop;
 
     opens application to javafx.fxml;
     opens components to javafx.fxml;

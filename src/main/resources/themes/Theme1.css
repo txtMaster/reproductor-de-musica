@@ -65,8 +65,8 @@
         to top,
         transparent 0%,
         transparent 40%,
-        main-color-lighten-2 40%,
-        main-color-lighten-2 60%,
+        main-color-lighten-5 40%,
+        main-color-lighten-5 60%,
         transparent 60%
     );
 }
@@ -75,8 +75,8 @@
         to left,
         transparent 0%,
         transparent 40%,
-        main-color-lighten-2 40%,
-        main-color-lighten-2 60%,
+        main-color-lighten-5 40%,
+        main-color-lighten-5 60%,
         transparent 60%
     );
 }
