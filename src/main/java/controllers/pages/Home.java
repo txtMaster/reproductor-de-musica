@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 import org.jaudiotagger.audio.AudioFile;
@@ -25,6 +24,8 @@ import utils.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
 
@@ -69,18 +70,39 @@ public class Home extends Controller {
         cover.heightProperty().addListener((obs,prev,next)->{
             if(artwork != null) loaderImage.run();
         });
+        AtomicBoolean moviendoSlider = new AtomicBoolean(false);
+        AtomicReference<Double> progress = new AtomicReference<>((double) 0);
         Timeline progressUpdater = new Timeline(
                 new KeyFrame(Duration.millis(500), e -> {
+                    if(moviendoSlider.get()) return;
                     if (currentSong.status().isPlaying()) {
                         long time = currentSong.status().time();         // en ms
                         long length = currentSong.media().info().duration(); // en ms
                         if (length > 0) {
-                            double progress = (double) time / length * 100;
-                            timeStatus.setValue(progress);
+                            progress.set((double) time / length * 100);
+                            timeStatus.setValue(progress.get());
                         }
                     }
                 })
         );
+        timeStatus.setOnMousePressed(e-> {
+            moviendoSlider.set(true);
+        });
+        timeStatus.setOnMouseReleased(e-> {
+            moviendoSlider.set(false);
+            if(progress.get() == timeStatus.getValue()) return;
+            float newPosition = (float) (timeStatus.getValue() / 100.0);
+            currentSong.controls().setPosition(newPosition);
+        });
+
+
+
+        timeStatus.valueChangingProperty().addListener((e,was,is)->{
+            System.out.println("changing!!!");
+            System.out.println(was);
+            System.out.println(is);
+        });
+
         progressUpdater.setCycleCount(Animation.INDEFINITE);
         progressUpdater.play();
     }
@@ -124,13 +146,8 @@ public class Home extends Controller {
                 }else{
                     loaderImage = ()-> {
                     ViewUtils.setOnlyBgImage(cover, this.artwork);
-                    /*
-                    songName.setTextFill(colors[0]);
-                    artistName.setTextFill(colors[1]);
-                    */
                     };
                     List<Color> colors = ViewUtils.getDominantColors(this.artwork);
-                    //List<Color> colors = DominantColors.getTopColors(this.artwork, 2, 24);
 
                     if(colors.size() != 2) return;
 
