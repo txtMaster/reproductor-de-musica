@@ -6,11 +6,14 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.images.Artwork;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.State;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class PlayerUtils {
     static public Image getArtwork(AudioFile audio){
@@ -43,5 +46,36 @@ public class PlayerUtils {
 
     public static int getDuration(AudioFile audio) {
         return audio.getAudioHeader().getTrackLength();
+    }
+
+    //si el audio termino reiniciar y asignar posicion
+    // la posicion representa el porcentaje del 0 al 100
+    public static void setRelativePosition(MediaPlayer mediaPlayer,double position){
+        if(mediaPlayer.status().state() == State.STOPPED){
+            mediaPlayer.controls().start();
+            mediaPlayer.controls().pause();
+        }
+        mediaPlayer.controls().setPosition((float) (position / 100.0));
+    }
+    public static void togglePlaying(MediaPlayer mediaPlayer){
+        if(mediaPlayer.status().isPlaying()){
+            mediaPlayer.controls().pause();
+        }
+        else if(
+                mediaPlayer.media().info().state() == State.STOPPED && mediaPlayer.media().info().duration() == mediaPlayer.status().time()
+        ) {
+            mediaPlayer.controls().start();
+        }else{
+            mediaPlayer.controls().play();
+        }
+    }
+
+    public static boolean isEmpty(MediaPlayer mediaPlayer){
+        return mediaPlayer.status().state() == State.NOTHING_SPECIAL;
+    }
+
+    public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback){
+        if(!isEmpty(mediaPlayer)) callback.accept(mediaPlayer);
+
     }
 }

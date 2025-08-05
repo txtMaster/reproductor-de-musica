@@ -7,6 +7,7 @@ import controllers.Controller;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -30,6 +31,7 @@ import uk.co.caprica.vlcj.media.TrackType;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
+import uk.co.caprica.vlcj.player.base.State;
 import utils.*;
 
 import java.io.File;
@@ -75,13 +77,6 @@ public class Home extends Controller {
 
     @FXML
     void initialize(){
-        timeStatus.addEventFilter(KeyEvent.KEY_PRESSED,e->{
-            switch (e.getCode()){
-                case KeyCode.LEFT,KeyCode.RIGHT->e.consume();
-                default -> {}
-            }
-        });
-
 
         mediaPlayerFactory = new MediaPlayerFactory();
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
@@ -102,31 +97,41 @@ public class Home extends Controller {
             @Override
             public void error(MediaPlayer mediaPlayer) {
                 super.error(mediaPlayer);
-                pause.getStyleClass().remove("playing");
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
             }
 
             @Override
             public void paused(MediaPlayer mediaPlayer) {
                 super.paused(mediaPlayer);
-                pause.getStyleClass().remove("playing");
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
             }
 
             @Override
             public void stopped(MediaPlayer mediaPlayer) {
                 super.stopped(mediaPlayer);
-                pause.getStyleClass().remove("playing");
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
             }
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
                 super.finished(mediaPlayer);
-                pause.getStyleClass().remove("playing");
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
             }
 
             @Override
             public void playing(MediaPlayer mediaPlayer) {
                 super.playing(mediaPlayer);
-                pause.getStyleClass().add("playing");
+                Platform.runLater(()->{
+                    pause.getStyleClass().add("playing");
+                });
             }
         });
 
@@ -155,9 +160,12 @@ public class Home extends Controller {
         });
         timeStatus.setOnMouseReleased(e-> {
             interactuandoConElSlider.set(false);
-            if(progress.get() == timeStatus.getValue()) return;
-            float newPosition = (float) (timeStatus.getValue() / 100.0);
-            currentSong.controls().setPosition(newPosition);
+            if(
+                    progress.get() == timeStatus.getValue()
+                    ||
+                    currentSong.status().state() == State.NOTHING_SPECIAL
+            ) return;
+            PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
         });
 
         progressUpdater.setCycleCount(Animation.INDEFINITE);
@@ -168,18 +176,22 @@ public class Home extends Controller {
     public void onSceneAssigned(Scene scene){
         shortcuts = new Shortcuts();
         shortcuts.actions.put(KeyEvent.KEY_PRESSED,(e)->{
-            long skipTime = switch (e.getCode()){
-                case LEFT-> -5000;
-                case RIGHT-> +5000;
-                default -> 0;
+            boolean toConsume = true;
+            long skipTime = 0;
+            switch (e.getCode()){
+                case LEFT-> skipTime = -5000;
+                case RIGHT-> skipTime = 5000;
+                case SPACE -> PlayerUtils.safeAction(currentSong, PlayerUtils::togglePlaying);
+                default -> toConsume = false;
             };
+            if(toConsume)e.consume();
             if (skipTime == 0 || !currentSong.status().isPlayable())return;
 
             interactuandoConElSlider.set(true);
 
             this.skipTime += skipTime;
             double length = currentSong.media().info().duration();
-            double newPercentage = skipTime / length * 100;
+            double newPercentage = ((double) skipTime / length) * 100;
             timeStatus.setValue(timeStatus.getValue()+newPercentage);
         });
         shortcuts.actions.put(KeyEvent.KEY_RELEASED,(e)->{
@@ -303,11 +315,6 @@ public class Home extends Controller {
 
     @FXML
     public void onPauseAction(ActionEvent actionEvent) {
-        if(!currentSong.status().isPlayable()) return;
-        if(currentSong.status().isPlaying()){
-            currentSong.controls().pause();
-        }else{
-            currentSong.controls().play();
-        }
+        PlayerUtils.safeAction(currentSong, PlayerUtils::togglePlaying);
     }
 }
