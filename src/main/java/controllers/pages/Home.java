@@ -7,14 +7,19 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -26,8 +31,11 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class Home extends Controller {
+
+    Shortcuts shortcuts;
 
     public MediaPlayer currentSong;
     public MediaPlayerFactory mediaPlayerFactory;
@@ -55,8 +63,19 @@ public class Home extends Controller {
     public Button btnPrevious;
     public Slider timeStatus;
 
+    //para el slider
+    long skipTime = 0L;
+    AtomicBoolean interactuandoConElSlider = new AtomicBoolean(false);
+
     @FXML
     void initialize(){
+        timeStatus.addEventFilter(KeyEvent.KEY_PRESSED,e->{
+            switch (e.getCode()){
+                case KeyCode.LEFT,KeyCode.RIGHT->e.consume();
+                default -> {}
+            }
+        });
+
         timeStatus.valueProperty().addListener((o,pre,pos)->{
             double percent = (pos.doubleValue() - timeStatus.getMin()) / (timeStatus.getMax() - timeStatus.getMin());
             timeStatus.lookup(".track").setStyle(
@@ -70,11 +89,10 @@ public class Home extends Controller {
         cover.heightProperty().addListener((obs,prev,next)->{
             if(artwork != null) loaderImage.run();
         });
-        AtomicBoolean moviendoSlider = new AtomicBoolean(false);
         AtomicReference<Double> progress = new AtomicReference<>((double) 0);
         Timeline progressUpdater = new Timeline(
                 new KeyFrame(Duration.millis(500), e -> {
-                    if(moviendoSlider.get()) return;
+                    if(interactuandoConElSlider.get()) return;
                     if (currentSong.status().isPlaying()) {
                         long time = currentSong.status().time();         // en ms
                         long length = currentSong.media().info().duration(); // en ms
@@ -86,26 +104,53 @@ public class Home extends Controller {
                 })
         );
         timeStatus.setOnMousePressed(e-> {
-            moviendoSlider.set(true);
+            interactuandoConElSlider.set(true);
         });
         timeStatus.setOnMouseReleased(e-> {
-            moviendoSlider.set(false);
+            interactuandoConElSlider.set(false);
             if(progress.get() == timeStatus.getValue()) return;
             float newPosition = (float) (timeStatus.getValue() / 100.0);
             currentSong.controls().setPosition(newPosition);
         });
 
-
-
-        timeStatus.valueChangingProperty().addListener((e,was,is)->{
-            System.out.println("changing!!!");
-            System.out.println(was);
-            System.out.println(is);
-        });
-
         progressUpdater.setCycleCount(Animation.INDEFINITE);
         progressUpdater.play();
     }
+
+    @Override
+    public void onSceneAssigned(Scene scene){
+        shortcuts = new Shortcuts();
+        shortcuts.actions.put(KeyEvent.KEY_PRESSED,(e)->{
+            long skipTime = switch (e.getCode()){
+                case LEFT-> -5000;
+                case RIGHT-> +5000;
+                default -> 0;
+            };
+            if (skipTime == 0 || !currentSong.status().isPlayable())return;
+
+            interactuandoConElSlider.set(true);
+
+            this.skipTime += skipTime;
+            double length = currentSong.media().info().duration();
+            double newPercentage = skipTime / length * 100;
+            timeStatus.setValue(timeStatus.getValue()+newPercentage);
+        });
+        shortcuts.actions.put(KeyEvent.KEY_RELEASED,(e)->{
+            switch (e.getCode()){
+                case LEFT,RIGHT -> {
+                    currentSong.controls().skipTime(skipTime);
+                    interactuandoConElSlider.set(false);
+                    skipTime = 0;
+                }
+                default -> {}
+            }
+        });
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED,shortcuts.run);
+        scene.addEventFilter(KeyEvent.KEY_RELEASED,shortcuts.run);
+
+    }
+
 
     @FXML
     public void onActionAbrirCarpeta(ActionEvent actionEvent) {

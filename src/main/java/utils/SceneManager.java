@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javax.sound.sampled.Control;
 import java.io.IOException;
 import java.net.URL;
 import java.util.function.Consumer;
@@ -31,6 +32,8 @@ public class SceneManager {
             stage.setScene(scene);
             ViewUtils.changeToDraggable(stage);
             ViewUtils.hideSystemBar(stage);
+            Controller controller = loader.getController();
+            controller.onSceneAssigned(scene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,7 +52,8 @@ public class SceneManager {
     public Scene createScene(Stage stage,FXMLLoader loader) throws IOException {
         Parent rootView = loader.load();
         Controller controller = loader.getController();
-        controller.stage = stage;
+        controller.setStage(stage);
+        controller.onStageAssigned(stage);
         stage.setOnCloseRequest(event->controller.onClose());
         return new Scene(rootView);
 

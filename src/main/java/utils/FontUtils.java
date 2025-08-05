@@ -5,11 +5,9 @@ import javafx.scene.text.Font;
 
 public class FontUtils {
     public static void load(String fileName){
-        System.out.println(
-                Font.loadFont(
-                        App.class.getResourceAsStream("/fonts/"+fileName),
-                        12
-                ).getName()
+        Font.loadFont(
+                App.class.getResourceAsStream("/fonts/"+fileName),
+                12
         );
     }
     public static void load(String... fileNames){
