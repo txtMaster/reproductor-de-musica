@@ -25,7 +25,11 @@ import javafx.util.Duration;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.media.MediaRef;
+import uk.co.caprica.vlcj.media.TrackType;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import utils.*;
 
 import java.io.File;
@@ -36,6 +40,7 @@ import java.util.function.Consumer;
 
 public class Home extends Controller {
 
+    public PrettySlider volumeSlider;
     Shortcuts shortcuts;
 
     public MediaPlayer currentSong;
@@ -77,8 +82,55 @@ public class Home extends Controller {
             }
         });
 
+
         mediaPlayerFactory = new MediaPlayerFactory();
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+
+
+        volumeSlider.valueProperty().addListener((obs,pre,pos)->{
+            currentSong.audio().setVolume(pos.intValue());
+        });
+
+        currentSong.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
+
+            @Override
+            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
+                super.audioDeviceChanged(mediaPlayer, audioDevice);
+                mediaPlayer.audio().setVolume((int)volumeSlider.getValue());
+            }
+
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                super.error(mediaPlayer);
+                pause.getStyleClass().remove("playing");
+            }
+
+            @Override
+            public void paused(MediaPlayer mediaPlayer) {
+                super.paused(mediaPlayer);
+                pause.getStyleClass().remove("playing");
+            }
+
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                super.stopped(mediaPlayer);
+                pause.getStyleClass().remove("playing");
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                super.finished(mediaPlayer);
+                pause.getStyleClass().remove("playing");
+            }
+
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                super.playing(mediaPlayer);
+                pause.getStyleClass().add("playing");
+            }
+        });
+
+
         coverRectangleClip.widthProperty().bind(cover.widthProperty());
         coverRectangleClip.heightProperty().bind(cover.heightProperty());
         cover.heightProperty().addListener((obs,prev,next)->{
@@ -254,10 +306,8 @@ public class Home extends Controller {
         if(!currentSong.status().isPlayable()) return;
         if(currentSong.status().isPlaying()){
             currentSong.controls().pause();
-            pause.getStyleClass().remove("playing");
         }else{
             currentSong.controls().play();
-            pause.getStyleClass().add("playing");
         }
     }
 }
