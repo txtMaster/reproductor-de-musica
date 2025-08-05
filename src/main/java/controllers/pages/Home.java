@@ -1,5 +1,6 @@
 package controllers.pages;
 
+import components.PrettySlider;
 import components.RelativeHBox;
 import components.SquareStackPane;
 import controllers.Controller;
@@ -61,7 +62,7 @@ public class Home extends Controller {
     public Runnable loaderImage = ()->{};
     public Rectangle coverRectangleClip;
     public Button btnPrevious;
-    public Slider timeStatus;
+    public PrettySlider timeStatus;
 
     //para el slider
     long skipTime = 0L;
@@ -76,12 +77,6 @@ public class Home extends Controller {
             }
         });
 
-        timeStatus.valueProperty().addListener((o,pre,pos)->{
-            double percent = (pos.doubleValue() - timeStatus.getMin()) / (timeStatus.getMax() - timeStatus.getMin());
-            timeStatus.lookup(".track").setStyle(
-                    "-fx-background-color: linear-gradient(to right, main-color " + (percent * 100) + "%, bg-color " + (percent * 100) + "%);"
-            );
-        });
         mediaPlayerFactory = new MediaPlayerFactory();
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
         coverRectangleClip.widthProperty().bind(cover.widthProperty());

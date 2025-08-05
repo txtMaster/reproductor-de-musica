@@ -1,0 +1,28 @@
+PrettySlider{
+    main-color:hsb(0,0%,50%);
+    bg-color:hsb(0,0%,20%);
+    main-size:0.5em;
+}
+
+PrettySlider .track{
+    -fx-pref-height:main-size;
+    -fx-background-color: linear-gradient(to right, main-color 0%, bg-color 0%);
+}
+
+PrettySlider .thumb{
+    -fx-background-color: main-color;
+    -fx-pref-width: main-size;
+    -fx-pref-height: main-size;
+    -fx-translate-y: 50%;
+    -fx-scale-x:1.1;
+    -fx-scale-y:1.1;
+    transition-property: -fx-scale-x, -fx-scale-y;
+    transition-duration: 0.1s, 0.1s;
+    transition-timing-function:linear,linear;
+}
+
+PrettySlider:hover .thumb{
+    -fx-background-color: derive(main-color,20%);
+    -fx-scale-x:1.4 !important;
+    -fx-scale-y:1.4 !important;
+}

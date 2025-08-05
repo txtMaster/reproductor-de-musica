@@ -47,25 +47,6 @@
     -fx-pref-height: 3em;
 }
 
-#player #timeStatus .track {
-    -fx-background-color: linear-gradient(to right, main-color 50%, bg-color 50%);
-    -fx-pref-height:main-size;
-}
-#player #timeStatus .thumb{
-    -fx-background-color: main-color;
-    -fx-pref-width: main-size;
-    -fx-pref-height: main-size;
-    transition-property: -fx-scale-x,fx-scale-y;
-    transition-duration: 0.1s, 0.1s;
-    transition-timing-function:linear,linear;
-}
-#player #timeStatus:hover .thumb{
-    -fx-scale-x:1.4;
-    -fx-scale-y:1.4;
-}
-#player #timeStatus .axis{
-    -fx-tick-label-fill: green;
-}
 #player .time{
     -fx-font-size:1.5em;
     -fx-alignment: center-left;
