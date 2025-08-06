@@ -2,15 +2,12 @@ package utils;
 
 import javafx.scene.image.Image;
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.images.Artwork;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.State;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -48,14 +45,15 @@ public class PlayerUtils {
         return audio.getAudioHeader().getTrackLength();
     }
 
-    //si el audio termino reiniciar y asignar posicion
+
     // la posicion representa el porcentaje del 0 al 100
-    public static void setRelativePosition(MediaPlayer mediaPlayer,double position){
+    public static void setRelativePosition(MediaPlayer mediaPlayer,double percentage){
+        //si el audio termino reiniciar y pausar
         if(mediaPlayer.status().state() == State.STOPPED){
             mediaPlayer.controls().start();
             mediaPlayer.controls().pause();
         }
-        mediaPlayer.controls().setPosition((float) (position / 100.0));
+        mediaPlayer.controls().setPosition((float) (percentage / 100.0));
     }
     public static void togglePlaying(MediaPlayer mediaPlayer){
         if(mediaPlayer.status().isPlaying()){
@@ -76,6 +74,11 @@ public class PlayerUtils {
 
     public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback){
         if(!isEmpty(mediaPlayer)) callback.accept(mediaPlayer);
-
+    }
+    public static long getTime(MediaPlayer mediaPlayer){
+        return mediaPlayer.status().time();
+    }
+    public static long getDuration(MediaPlayer mediaPlayer){
+        return mediaPlayer.media().info().duration();
     }
 }

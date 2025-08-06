@@ -77,7 +77,7 @@
                                         </Button>
                                     </HBox>
                                 </HBox>
-                                <PrettySlider fx:id="timeStatus" value="50"/>
+                                <PrettySlider fx:id="timeStatus" value="50" blockIncrement="0.01"/>
                                 <PrettySlider fx:id="volumeSlider" value="100"/>
                             </VBox>
                         </children>

@@ -133,6 +133,14 @@ public class Home extends Controller {
                     pause.getStyleClass().add("playing");
                 });
             }
+
+            @Override
+            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+                super.lengthChanged(mediaPlayer, newLength);
+                Platform.runLater(()->{
+                    totalTime.setText(FormatUtils.msToString(newLength));
+                });
+            }
         });
 
 
@@ -144,32 +152,51 @@ public class Home extends Controller {
         AtomicReference<Double> progress = new AtomicReference<>((double) 0);
         Timeline progressUpdater = new Timeline(
                 new KeyFrame(Duration.millis(500), e -> {
+
                     if(interactuandoConElSlider.get()) return;
-                    if (currentSong.status().isPlaying()) {
-                        long time = currentSong.status().time();         // en ms
-                        long length = currentSong.media().info().duration(); // en ms
-                        if (length > 0) {
-                            progress.set((double) time / length * 100);
-                            timeStatus.setValue(progress.get());
-                        }
-                    }
+
+                    PlayerUtils.safeAction(currentSong,ms->{
+                        long currentsMs = PlayerUtils.getTime(currentSong);
+                        long totalMs = PlayerUtils.getDuration(currentSong);
+
+                        progress.set((double) currentsMs / totalMs * 100);
+                        timeStatus.setValue(progress.get());
+                        currentTime.setText(
+                                FormatUtils.msToString(currentsMs)
+                        );
+                    });
                 })
         );
+        progressUpdater.setCycleCount(Animation.INDEFINITE);
+        progressUpdater.play();
+
         timeStatus.setOnMousePressed(e-> {
             interactuandoConElSlider.set(true);
+            PlayerUtils.safeAction(currentSong,mp->{
+                long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
+            });
         });
         timeStatus.setOnMouseReleased(e-> {
             interactuandoConElSlider.set(false);
-            if(
-                    progress.get() == timeStatus.getValue()
-                    ||
-                    currentSong.status().state() == State.NOTHING_SPECIAL
-            ) return;
-            PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
+            PlayerUtils.safeAction(currentSong,mp->{
+                if(
+                        progress.get() == timeStatus.getValue()
+                                ||
+                                currentSong.status().state() == State.NOTHING_SPECIAL
+                ) return;
+                PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
+                long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
+            });
         });
-
-        progressUpdater.setCycleCount(Animation.INDEFINITE);
-        progressUpdater.play();
+        timeStatus.valueProperty().addListener((obs,pre,pos)->{
+            if(!interactuandoConElSlider.get())return;
+            PlayerUtils.safeAction(currentSong,mp->{
+                long currentMs = (long) (pos.doubleValue() / 100 * PlayerUtils.getDuration(currentSong));
+                currentTime.setText(
+                        FormatUtils.msToString(currentMs)
+                );
+            });
+        });
     }
 
     @Override
@@ -190,14 +217,20 @@ public class Home extends Controller {
             interactuandoConElSlider.set(true);
 
             this.skipTime += skipTime;
-            double length = currentSong.media().info().duration();
-            double newPercentage = ((double) skipTime / length) * 100;
-            timeStatus.setValue(timeStatus.getValue()+newPercentage);
+            long duration = PlayerUtils.getDuration(currentSong);
+            double newPercentage = Math.clamp((double) skipTime / duration * 100 + timeStatus.getValue(),0,100);
+
+            timeStatus.setValue(newPercentage);
         });
         shortcuts.actions.put(KeyEvent.KEY_RELEASED,(e)->{
             switch (e.getCode()){
                 case LEFT,RIGHT -> {
                     currentSong.controls().skipTime(skipTime);
+                    currentTime.setText(
+                            FormatUtils.msToString(
+                                    PlayerUtils.getTime(currentSong)
+                            )
+                    );
                     interactuandoConElSlider.set(false);
                     skipTime = 0;
                 }
@@ -257,6 +290,7 @@ public class Home extends Controller {
 
                     Color primaryColor, secondaryColor;
 
+                    //preferir al color que tiene mas saturacion
                     if(colors.getFirst().getSaturation() >= colors.get(1).getSaturation()){
                         primaryColor = colors.getFirst();
                         secondaryColor = colors.get(1);
@@ -269,6 +303,7 @@ public class Home extends Controller {
                             saturation1 = primaryColor.getSaturation(),
                             saturation2 = secondaryColor.getSaturation();
 
+                    //si la saturacion es 0 (sin tono), no editarlo. Caso contrario limitar saturacion a un rango
                     saturation1 = saturation1 == 0 ?
                             0.0 : Math.max(0.15,Math.min(saturation1,0.3));
                     saturation2 = saturation2 == 0 ?
