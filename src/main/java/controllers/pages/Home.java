@@ -174,6 +174,7 @@ public class Home extends Controller {
             interactuandoConElSlider.set(true);
             PlayerUtils.safeAction(currentSong,mp->{
                 long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
+                currentTime.setText(FormatUtils.msToString(currentMs));
             });
         });
         timeStatus.setOnMouseReleased(e-> {
@@ -186,6 +187,7 @@ public class Home extends Controller {
                 ) return;
                 PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
                 long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
+                currentTime.setText(FormatUtils.msToString(currentMs));
             });
         });
         timeStatus.valueProperty().addListener((obs,pre,pos)->{
