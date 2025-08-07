@@ -279,11 +279,11 @@ public class Home extends Controller {
             String song = PlayerUtils.getTitle(audio);
             String artist = PlayerUtils.getArtist(audio);
             Image artwork = PlayerUtils.getArtwork(audio);
-            int duration = PlayerUtils.getDuration(audio);
+            var duration = PlayerUtils.getDuration(audio);
 
             songBtn.setSong(song);
             songBtn.setArtist(artist);
-            songBtn.setDuration(duration);
+            songBtn.setDuration(duration * 1000);
 
             songBtn.setOnAction((ActionEvent event)->{
                 currentSong.controls().stop();
