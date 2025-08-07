@@ -9,6 +9,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -36,6 +37,7 @@ import uk.co.caprica.vlcj.player.base.State;
 import utils.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -267,94 +269,113 @@ public class Home extends Controller {
 
         playList.getChildren().clear();
 
-        List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
-        for (File fileAudio : fileAudios){
-            SongToggleButton songBtn = new SongToggleButton();
-            AudioFile audio;
-            try{
-                audio = AudioFileIO.read(new java.io.File(fileAudio.getAbsolutePath()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            String song = PlayerUtils.getTitle(audio);
-            String artist = PlayerUtils.getArtist(audio);
-            Image artwork = PlayerUtils.getArtwork(audio);
-            var duration = PlayerUtils.getDuration(audio);
+        Home self = this;
 
-            songBtn.setSong(song);
-            songBtn.setArtist(artist);
-            songBtn.setDuration(duration * 1000);
-
-            songBtn.setOnAction((ActionEvent event)->{
-                currentSong.controls().stop();
-
-                totalTime.setText(Integer.toString(duration));
-                artistName.setText(artist);
-                songName.setText(song);
-                this.artwork = artwork;
-                if(this.artwork == null){
-                    loaderImage = ()->{};
-                    songName.setStyle(null);
-                    artistName.setStyle(null);
-                    timeStatus.setStyle(null);
-                    cover.setBackground(null);
-                    cover.applyCss();
-                    cover.layout();
-                }else{
-                    loaderImage = ()-> {
-                    ViewUtils.setOnlyBgImage(cover, this.artwork);
-                    };
-                    List<Color> colors = ViewUtils.getDominantColors(this.artwork);
-
-                    if(colors.size() != 2) return;
-
-                    Color primaryColor, secondaryColor;
-
-                    //preferir al color que tiene mas saturacion
-                    if(colors.getFirst().getSaturation() >= colors.get(1).getSaturation()){
-                        primaryColor = colors.getFirst();
-                        secondaryColor = colors.get(1);
-                    }else{
-                        primaryColor = colors.get(1);
-                        secondaryColor = colors.getFirst();
+        Task<Void> loadSongsTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
+                for (File fileAudio : fileAudios){
+                    SongToggleButton songBtn = new SongToggleButton();
+                    AudioFile audio;
+                    try{
+                        audio = AudioFileIO.read(new java.io.File(fileAudio.getAbsolutePath()));
+                    } catch (Exception e) {
+                        continue;
                     }
+                    String song = PlayerUtils.getTitle(audio);
+                    String artist = PlayerUtils.getArtist(audio);
+                    Image artwork = PlayerUtils.getArtwork(audio);
+                    var duration = PlayerUtils.getDuration(audio);
 
-                    double
-                            saturation1 = primaryColor.getSaturation(),
-                            saturation2 = secondaryColor.getSaturation();
+                    songBtn.setSong(song);
+                    songBtn.setArtist(artist);
+                    songBtn.setDuration(duration * 1000);
 
-                    //si la saturacion es 0 (sin tono), no editarlo. Caso contrario limitar saturacion a un rango
-                    saturation1 = saturation1 == 0 ?
-                            0.0 : Math.max(0.15,Math.min(saturation1,0.3));
-                    saturation2 = saturation2 == 0 ?
-                            0.0 : Math.max(0.02,Math.min(saturation2,0.10));
+                    songBtn.setOnAction((ActionEvent event)->{
+                        currentSong.controls().stop();
 
-                    songName.setStyle(
-                            "-fx-text-fill:hsb("+
-                                    primaryColor.getHue()+","+
-                                    (saturation1 * 100) + "%,"+
-                                    "86%);"
-                    );
-                    artistName.setStyle(
-                            "-fx-text-fill:hsb("+
-                                    secondaryColor.getHue()+","+
-                                    (saturation2 * 100) + "%,"+
-                                    "74%);"
-                    );
-                    timeStatus.setStyle(
-                            "main-color:hsb("+
-                                    primaryColor.getHue()+","+
-                                    ((saturation1 * 1.6) * 100) + "%,"+
-                                    "86%);"
-                    );
+                        totalTime.setText(Integer.toString(duration));
+                        artistName.setText(artist);
+                        songName.setText(song);
+                        self.artwork = artwork;
+                        if(self.artwork == null){
+                            loaderImage = ()->{};
+                            songName.setStyle(null);
+                            artistName.setStyle(null);
+                            timeStatus.setStyle(null);
+                            cover.setBackground(null);
+                            cover.applyCss();
+                            cover.layout();
+                        }else{
+                            loaderImage = ()-> {
+                                ViewUtils.setOnlyBgImage(cover, self.artwork);
+                            };
+                            List<Color> colors = ViewUtils.getDominantColors(self.artwork);
+
+                            if(colors.size() != 2) return;
+
+                            Color primaryColor, secondaryColor;
+
+                            //preferir al color que tiene mas saturacion
+                            if(colors.getFirst().getSaturation() >= colors.get(1).getSaturation()){
+                                primaryColor = colors.getFirst();
+                                secondaryColor = colors.get(1);
+                            }else{
+                                primaryColor = colors.get(1);
+                                secondaryColor = colors.getFirst();
+                            }
+
+                            double
+                                    saturation1 = primaryColor.getSaturation(),
+                                    saturation2 = secondaryColor.getSaturation();
+
+                            //si la saturacion es 0 (sin tono), no editarlo. Caso contrario limitar saturacion a un rango
+                            saturation1 = saturation1 == 0 ?
+                                    0.0 : Math.max(0.15,Math.min(saturation1,0.3));
+                            saturation2 = saturation2 == 0 ?
+                                    0.0 : Math.max(0.02,Math.min(saturation2,0.10));
+
+                            songName.setStyle(
+                                    "-fx-text-fill:hsb("+
+                                            primaryColor.getHue()+","+
+                                            (saturation1 * 100) + "%,"+
+                                            "86%);"
+                            );
+                            artistName.setStyle(
+                                    "-fx-text-fill:hsb("+
+                                            secondaryColor.getHue()+","+
+                                            (saturation2 * 100) + "%,"+
+                                            "74%);"
+                            );
+                            timeStatus.setStyle(
+                                    "main-color:hsb("+
+                                            primaryColor.getHue()+","+
+                                            ((saturation1 * 1.6) * 100) + "%,"+
+                                            "86%);"
+                            );
+                        }
+
+                        loaderImage.run();
+
+                        currentSong.media().play(fileAudio.getAbsolutePath());
+                    });
+                    Platform.runLater(()->{
+                        playList.getChildren().add(songBtn);
+                    });
                 }
+                return null;
+            }
+        };
 
-                loaderImage.run();
+        loadSongsTask.setOnFailed(e -> {
+            playList.getChildren().clear();
+            Label error = new Label("Error al cargar audios");
+            playList.getChildren().add(error);
+            loadSongsTask.getException().printStackTrace();
+        });
 
-                currentSong.media().play(fileAudio.getAbsolutePath());
-            });
-            playList.getChildren().add(songBtn);
-        }
+        new Thread(loadSongsTask).start();
     }
 
     @Override
