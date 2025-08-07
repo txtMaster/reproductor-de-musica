@@ -28,7 +28,8 @@
     main-color-lighten-6: hsb(0,0%,34%);
     main-color-lighten-7: hsb(0,0%,58%);
     main-color-lighten-8: hsb(0,0%,72%);
-    main-color-lighten-9: hsb(0,0%,92%);
+    main-color-lighten-9: hsb(0,0%,80%);
+    main-color-lighten-10: hsb(0,0%,92%);
 
     main-color-darken-0: main-color;
     main-color-darken-1: derive(main-color,-10%);
@@ -80,3 +81,9 @@
         transparent 60%
     );
 }
+
+.tx-thin{-fx-font-family:"Inter Thin";}
+.tx-light{-fx-font-family:"Inter Light";}
+.tx-normal{-fx-font-family:"Inter Regular";}
+.tx-medium{-fx-font-family:"Inter Medium";}
+.tx-bold{-fx-font-family:"Inter Bold";}

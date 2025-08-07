@@ -10,6 +10,8 @@
 <?import java.net.URL?>
 <?import java.lang.String?>
 <?import components.PrettySlider?>
+<?import components.SquareRegion?>
+<?import components.SongToggleButton?>
 <VBox
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
@@ -29,7 +31,7 @@
         <SplitPane
                 VBox.vgrow="ALWAYS"
                 prefHeight="200"
-                dividerPositions="0.6"
+                dividerPositions="0.25"
                 orientation="VERTICAL">
             <items>
                 <StackPane styleClass="wrapper-superior">
@@ -52,9 +54,11 @@
                                 </VBox>
                                 <HBox styleClass="timeAndButtons">
                                     <HBox styleClass="time">
-                                        <Label fx:id="currentTime" text="0:10" />
-                                        <Label text=" - " />
-                                        <Label fx:id="totalTime" text="1:00" />
+                                        <Label fx:id="currentTime" text="0:10" styleClass="tx-white-9" />
+                                        <Label text=" - " styleClass="tx-white-6" />
+                                        <Label fx:id="totalTime"
+                                        text="1:00"
+                                        styleClass="tx-white-7"/>
                                     </HBox>
                                     <HBox styleClass="buttons">
                                         <Button mnemonicParsing="false" fx:id="btnPrevious" prefWidth="20" prefHeight="20">
@@ -101,32 +105,47 @@
                                     </VBox>
                                     <Label text="Listas"
                                            styleClass="tx-white-7,tx-1"/>
-                                    <VBox styleClass="bg-white-2,p2,rad3">
+                                    <VBox styleClass="bg-white-2,p3,rad3">
                                         <ToggleButton text="Inicio" toggleGroup="$grupoDeSecciones"
-                                        styleClass=""/>
-                                        <ToggleButton text="Favoritos" toggleGroup="$grupoDeSecciones" />
-                                        <ToggleButton text="Mis Listas" toggleGroup="$grupoDeSecciones" />
-                                        <ToggleButton text="Artistas" toggleGroup="$grupoDeSecciones" />
-                                        <ToggleButton text="Albums" toggleGroup="$grupoDeSecciones" />
+                                                      styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                        <ToggleButton text="Favoritos" toggleGroup="$grupoDeSecciones"
+                                                      styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                        <ToggleButton text="Mis Listas" toggleGroup="$grupoDeSecciones"
+                                                      styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                        <ToggleButton text="Artistas" toggleGroup="$grupoDeSecciones"
+                                                      styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                        <ToggleButton text="Albums" toggleGroup="$grupoDeSecciones"
+                                                      styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                    </VBox>
+                                    <VBox   fx:id="options"
+                                            VBox.vgrow="ALWAYS">
+                                        <Button text="MiniPlayer"/>
+                                        <Button fx:id="closeBtn" text="Close" onAction="#onCloseBtnAction"/>
                                     </VBox>
                                 </VBox>
                             </ScrollPane>
                         </StackPane>
                         <StackPane styleClass="wrapper-derecho">
                             <VBox fx:id="pestanas">
-                                <HBox spacing="10">
-                                    <Label>Any : </Label>
-                                    <Label>Song : </Label>
-                                    <Label>Artist : </Label>
-                                    <Label>Date : </Label>
+                                <HBox spacing="10" styleClass="p4">
+                                    <Label styleClass="tx-white-7,tx-bold">
+                                        Order by :
+                                    </Label>
+                                    <Label styleClass="tx-white-8">Song</Label>
+                                    <Label styleClass="tx-white-8">
+                                        Artist
+                                    </Label>
+                                    <Label styleClass="tx-white-8">
+                                        Date
+                                    </Label>
                                 </HBox>
                                 <ScrollPane VBox.vgrow="ALWAYS">
                                     <VBox alignment="TOP_CENTER"
-                                          styleClass="fit-child"
+                                          styleClass="fit-child,s4"
                                           fx:id="playList">
-                                        <Button text="boton 1"/>
-                                        <Button text="boton 2"/>
-                                        <Button text="boton 3"/>
+                                        <SongToggleButton
+                                                song="Random Song to LOOOOOOOOOOOOOOOOOOOOOOGGGG" artist="Random artist"/>
+                                        <SongToggleButton song="Random Song" artist="Random artist"/>
                                     </VBox>
                                 </ScrollPane>
                             </VBox>

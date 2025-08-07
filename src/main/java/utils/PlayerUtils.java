@@ -67,13 +67,23 @@ public class PlayerUtils {
             mediaPlayer.controls().play();
         }
     }
+    public static void timeToInit(MediaPlayer mediaPlayer){
+        if(notEmpty(mediaPlayer))mediaPlayer.controls().setTime(0);
+    }
+    public static void timeToEnd(MediaPlayer mediaPlayer){
+        if(notEmpty(mediaPlayer))
+            mediaPlayer.controls().setTime(
+                    //enviar casi al ultimo para que no salga un error de buffer al intentar cargar el ultimo momento del archivo de golpe
+                    PlayerUtils.getDuration(mediaPlayer) - 500
+            );
+    }
 
-    public static boolean isEmpty(MediaPlayer mediaPlayer){
-        return mediaPlayer.status().state() == State.NOTHING_SPECIAL;
+    public static boolean notEmpty(MediaPlayer mediaPlayer){
+        return mediaPlayer.status().state() != State.NOTHING_SPECIAL;
     }
 
     public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback){
-        if(!isEmpty(mediaPlayer)) callback.accept(mediaPlayer);
+        if(notEmpty(mediaPlayer)) callback.accept(mediaPlayer);
     }
     public static long getTime(MediaPlayer mediaPlayer){
         return mediaPlayer.status().time();

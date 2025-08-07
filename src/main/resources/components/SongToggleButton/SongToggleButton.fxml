@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import components.SquareRegion?>
+<fx:root type="ToggleButton"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         styleClass="song-toggle-button,bg-white-1,p0,rad3"
+         stylesheets="@SongToggleButton.css">
+    <graphic>
+        <HBox styleClass="hbox,bg-0">
+            <SquareRegion styleClass="bg-white-3"/>
+            <VBox HBox.hgrow="ALWAYS"
+                  styleClass="text-vbox,p5">
+                <Label
+                        fx:id="song"
+                        text="song name"
+                        styleClass="song,tx-white-9,tx-medium"/>
+                <Label
+                        fx:id="artist"
+                        text="artist"
+                        styleClass="artist,tx-white-7"/>
+            </VBox>
+            <Label
+                    fx:id="durationLb"
+                    styleClass="duration,h-100,p5,tx-white-8"/>
+        </HBox>
+    </graphic>
+</fx:root>

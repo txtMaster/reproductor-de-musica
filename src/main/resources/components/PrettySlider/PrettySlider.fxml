@@ -6,7 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="Slider" xmlns="http://javafx.com/javafx"
+<fx:root type="Slider"
+         xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          styleClass="pretty-slider"
          stylesheets="@PrettySlider.css"/>

@@ -51,9 +51,7 @@
     -fx-font-size:1.5em;
     -fx-alignment: center-left;
 }
-#player .time .label{
-    -fx-text-fill:gray;
-}
+
 #player .buttons{
     -fx-alignment:center;
     -fx-spacing:1em;
@@ -68,12 +66,14 @@
 }
 #songName{
     -fx-font-size: 3em;
-    -fx-text-fill:main-color-lighten-9;
+    -fx-text-fill:main-color-lighten-10;
+    -fx-font-family:"Inter Medium";
     -fx-stroke:transparent;
     -fx-stroke-width:0;
 }
 #artistName{
     -fx-font-size: 2em;
+    -fx-font-family:"Inter Medium";
     -fx-text-fill:main-color-lighten-8;
 }
 
@@ -165,7 +165,7 @@ Button.pause{
 }
 
 #folders .toggle-button{
-    -fx-text-fill: main-color-lighten-8;
+    -fx-text-fill: main-color-lighten-9;
     -fx-pref-width:Infinity;
     -fx-background-color:transparent;
     -fx-min-width:0;
@@ -174,7 +174,24 @@ Button.pause{
 
 #folders .toggle-button:selected{
     -fx-background-color:main-color-lighten-4;
+    -fx-font-family: "Inter Medium";
 }
 #pestanas{
     
+}
+#options{
+    -fx-alignment:bottom_center;
+}
+#options .button{
+    -fx-alignment:bottom_left;
+    -fx-background-color:transparent;
+    -fx-max-width:Infinity;
+    -fx-text-fill: main-color-lighten-9;
+}
+#playlist{
+}
+
+.songButton,.song-toggle-button{
+    -fx-pref-height:5em;
+    /*-fx-background-radius:20;*/
 }

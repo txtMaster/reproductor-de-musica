@@ -2,6 +2,7 @@ package controllers.pages;
 
 import components.PrettySlider;
 import components.RelativeHBox;
+import components.SongToggleButton;
 import components.SquareStackPane;
 import controllers.Controller;
 import javafx.animation.Animation;
@@ -43,6 +44,8 @@ import java.util.function.Consumer;
 public class Home extends Controller {
 
     public PrettySlider volumeSlider;
+    public VBox options;
+    public Button closeBtn;
     Shortcuts shortcuts;
 
     public MediaPlayer currentSong;
@@ -172,6 +175,7 @@ public class Home extends Controller {
 
         timeStatus.setOnMousePressed(e-> {
             interactuandoConElSlider.set(true);
+            //al clickear el slider actualizar el label de tiempo
             PlayerUtils.safeAction(currentSong,mp->{
                 long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
                 currentTime.setText(FormatUtils.msToString(currentMs));
@@ -186,6 +190,8 @@ public class Home extends Controller {
                                 currentSong.status().state() == State.NOTHING_SPECIAL
                 ) return;
                 PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
+
+                //al soltar el slider actualizar el label de tiempo
                 long currentMs = (long) (timeStatus.getValue() / 100 * PlayerUtils.getDuration(currentSong));
                 currentTime.setText(FormatUtils.msToString(currentMs));
             });
@@ -205,12 +211,15 @@ public class Home extends Controller {
     public void onSceneAssigned(Scene scene){
         shortcuts = new Shortcuts();
         shortcuts.actions.put(KeyEvent.KEY_PRESSED,(e)->{
+            System.out.println(e.getCode().toString());
             boolean toConsume = true;
             long skipTime = 0;
             switch (e.getCode()){
                 case LEFT-> skipTime = -5000;
                 case RIGHT-> skipTime = 5000;
                 case SPACE -> PlayerUtils.safeAction(currentSong, PlayerUtils::togglePlaying);
+                case HOME -> PlayerUtils.safeAction(currentSong,PlayerUtils::timeToInit);
+                case END -> PlayerUtils.safeAction(currentSong,PlayerUtils::timeToEnd);
                 default -> toConsume = false;
             };
             if(toConsume)e.consume();
@@ -260,20 +269,29 @@ public class Home extends Controller {
 
         List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
         for (File fileAudio : fileAudios){
-            Button btn = new Button(fileAudio.getName());
+            SongToggleButton songBtn = new SongToggleButton();
             AudioFile audio;
             try{
                 audio = AudioFileIO.read(new java.io.File(fileAudio.getAbsolutePath()));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            btn.setOnAction((ActionEvent event)->{
+            String song = PlayerUtils.getTitle(audio);
+            String artist = PlayerUtils.getArtist(audio);
+            Image artwork = PlayerUtils.getArtwork(audio);
+            int duration = PlayerUtils.getDuration(audio);
+
+            songBtn.setSong(song);
+            songBtn.setArtist(artist);
+            songBtn.setDuration(duration);
+
+            songBtn.setOnAction((ActionEvent event)->{
                 currentSong.controls().stop();
 
-                totalTime.setText(Integer.toString(PlayerUtils.getDuration(audio)));
-                artistName.setText(PlayerUtils.getArtist(audio));
-                songName.setText(PlayerUtils.getTitle(audio));
-                this.artwork = PlayerUtils.getArtwork(audio);
+                totalTime.setText(Integer.toString(duration));
+                artistName.setText(artist);
+                songName.setText(song);
+                this.artwork = artwork;
                 if(this.artwork == null){
                     loaderImage = ()->{};
                     songName.setStyle(null);
@@ -335,7 +353,7 @@ public class Home extends Controller {
 
                 currentSong.media().play(fileAudio.getAbsolutePath());
             });
-            playList.getChildren().add(btn);
+            playList.getChildren().add(songBtn);
         }
     }
 
@@ -353,5 +371,10 @@ public class Home extends Controller {
     @FXML
     public void onPauseAction(ActionEvent actionEvent) {
         PlayerUtils.safeAction(currentSong, PlayerUtils::togglePlaying);
+    }
+
+    @FXML
+    public void onCloseBtnAction(ActionEvent actionEvent) {
+        stage.close();
     }
 }
