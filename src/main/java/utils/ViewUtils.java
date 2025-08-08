@@ -1,12 +1,16 @@
 package utils;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -129,6 +133,33 @@ public class ViewUtils {
         Color mostCommon = sorted.get(0).getKey();
         Color secondCommon = sorted.size() > 1 ? sorted.get(1).getKey() : mostCommon;
         return Arrays.stream(new Color[]{mostCommon,secondCommon}).toList();
+    }
+
+    public static Node getPartner(Node node, KeyCode key){
+        if(key != KeyCode.UP && key != KeyCode.DOWN)
+            return null;
+       return getPartner(node,key != KeyCode.UP);
+    }
+
+    public static Node getPartner(Node node, boolean toNext){
+        Parent parent = node.getParent();
+        if(!(parent instanceof Pane)) return null;
+
+        ObservableList<Node> partners = ((Pane) parent).getChildren();
+
+        int size = partners.size();
+
+        if(size == 1) return null;
+        int index = partners.indexOf(node);
+        if(index == -1) return null;
+
+        if(toNext){
+            index = (index + 1) % size;
+        }else {
+            index = (index - 1 + size) % size;
+        }
+        //index = ((toNext) ? (index + 1) : ((index - 1) + size)) % size;
+        return partners.get(index);
     }
 }
 

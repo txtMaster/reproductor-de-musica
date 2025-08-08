@@ -5,34 +5,34 @@ import components.RelativeHBox;
 import components.SongToggleButton;
 import components.SquareStackPane;
 import controllers.Controller;
+import datas.SongData;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.util.Duration;
+import mappers.SongMapper;
+import models.SongModel;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.media.MediaRef;
-import uk.co.caprica.vlcj.media.TrackType;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.base.State;
 import utils.*;
 
@@ -41,9 +41,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class Home extends Controller {
+
+    public ToggleGroup songButtonsGroup;
+    public ScrollPane scrollPlaylist;
+
+    {
+        songButtonsGroup = new ToggleGroup();
+    }
 
     public PrettySlider volumeSlider;
     public VBox options;
@@ -76,6 +82,9 @@ public class Home extends Controller {
     public Button btnPrevious;
     public PrettySlider timeStatus;
 
+    public List<SongData> songsData = new ArrayList<SongData>();
+    public SongModel currentSongModel = new SongModel();
+
     //para el slider
     long skipTime = 0L;
     AtomicBoolean interactuandoConElSlider = new AtomicBoolean(false);
@@ -85,6 +94,19 @@ public class Home extends Controller {
 
         mediaPlayerFactory = new MediaPlayerFactory();
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+
+        songName.textProperty().bind(currentSongModel.titleProperty());
+        artistName.textProperty().bind(currentSongModel.artistProperty());
+        totalTime.textProperty().bind(
+                Bindings.createStringBinding(
+                        ()->{
+                            return FormatUtils.msToString(currentSongModel.getDuration());
+                        },currentSongModel.durationProperty()
+                )
+        );
+        currentSongModel.imageDataProperty().addListener((e,pre,pos)->{
+            this.artwork = PlayerUtils.getArtwork(pos);
+        });
 
 
         volumeSlider.valueProperty().addListener((obs,pre,pos)->{
@@ -143,7 +165,7 @@ public class Home extends Controller {
             public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
                 super.lengthChanged(mediaPlayer, newLength);
                 Platform.runLater(()->{
-                    totalTime.setText(FormatUtils.msToString(newLength));
+                    currentSongModel.setDuration((int)newLength);
                 });
             }
         });
@@ -206,6 +228,17 @@ public class Home extends Controller {
                         FormatUtils.msToString(currentMs)
                 );
             });
+        });
+
+        playList.addEventFilter(KeyEvent.KEY_PRESSED,e->{
+            EventTarget songBtn = e.getTarget();
+            Node nextNode = ViewUtils.getPartner(
+                    (Node)songBtn,
+                    e.getCode()
+            );
+            if(nextNode == null) return;
+            nextNode.requestFocus();
+            e.consume();
         });
     }
 
@@ -275,30 +308,30 @@ public class Home extends Controller {
             @Override
             protected Void call() throws Exception {
                 List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
+                AudioFile audio;
                 for (File fileAudio : fileAudios){
                     SongToggleButton songBtn = new SongToggleButton();
-                    AudioFile audio;
                     try{
                         audio = AudioFileIO.read(new java.io.File(fileAudio.getAbsolutePath()));
                     } catch (Exception e) {
                         continue;
                     }
-                    String song = PlayerUtils.getTitle(audio);
-                    String artist = PlayerUtils.getArtist(audio);
+                    SongData songData = new SongData(audio);
+                    /*
                     Image artwork = PlayerUtils.getArtwork(audio);
-                    var duration = PlayerUtils.getDuration(audio);
+                     */
 
-                    songBtn.setSong(song);
-                    songBtn.setArtist(artist);
-                    songBtn.setDuration(duration * 1000);
+                    songBtn.setTitle(songData.getTitle());
+                    songBtn.setArtist(songData.getArtist());
+                    songBtn.setDuration(songData.getDuration() * 1000);
 
-                    songBtn.setOnAction((ActionEvent event)->{
+                    songBtn.selectedProperty().addListener((obs,was,is)->{
+                        if(!is) return;
                         currentSong.controls().stop();
-
-                        totalTime.setText(Integer.toString(duration));
-                        artistName.setText(artist);
-                        songName.setText(song);
+                        currentSongModel.set(songData);
+                        /*
                         self.artwork = artwork;
+                        */
                         if(self.artwork == null){
                             loaderImage = ()->{};
                             songName.setStyle(null);
@@ -358,9 +391,11 @@ public class Home extends Controller {
 
                         loaderImage.run();
 
-                        currentSong.media().play(fileAudio.getAbsolutePath());
+                        currentSong.media().play(songData.getPath());
                     });
+
                     Platform.runLater(()->{
+                        songBtn.setToggleGroup(songButtonsGroup);
                         playList.getChildren().add(songBtn);
                     });
                 }
@@ -375,7 +410,9 @@ public class Home extends Controller {
             loadSongsTask.getException().printStackTrace();
         });
 
-        new Thread(loadSongsTask).start();
+        Thread thread = new Thread(loadSongsTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override

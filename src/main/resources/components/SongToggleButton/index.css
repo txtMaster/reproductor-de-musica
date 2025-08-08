@@ -1,0 +1,17 @@
+.text-vbox{
+    -fx-alignment:center_left;
+    -fx-min-width:0;
+    -fx-pref-width:0;
+}
+
+.title-label{
+    -fx-font-size:1em;
+}
+.artist-label{
+    -fx-font-size:0.8em;
+}
+
+.duration-label{
+    -fx-font-size: 0.8em;
+    -fx-max-height:Infinity;
+}

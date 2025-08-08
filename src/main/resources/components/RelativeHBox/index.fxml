@@ -10,6 +10,6 @@
          xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          styleClass="relative-hbox"
-         stylesheets="@RelativeHBox.css">
+         stylesheets="@index.css">
 
 </fx:root>

@@ -13,13 +13,23 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class PlayerUtils {
-    static public Image getArtwork(AudioFile audio){
-        Tag tag = audio.getTagOrCreateDefault();
+
+    static public byte[] getImageData(AudioFile audioFile){
+        Tag tag = audioFile.getTagOrCreateDefault();
         if (tag.getFirstArtwork() == null) return null;
-        Artwork artwork = tag.getFirstArtwork();
-        byte[] imageData = artwork.getBinaryData();
+        return tag.getFirstArtwork().getBinaryData();
+    }
+    static public Image getArtwork(AudioFile audio){
+        byte[] imageData = getImageData(audio);
+        if(imageData == null) return null;
         return new Image(new ByteArrayInputStream(imageData));
     }
+
+    static public Image getArtwork(byte[] imageData){
+        if(imageData == null) return null;
+        return new Image(new ByteArrayInputStream(imageData));
+    }
+
     static final List<String> EXTENSIONS = Arrays.asList(".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a");
 
     static public String getTitle(AudioFile audio){

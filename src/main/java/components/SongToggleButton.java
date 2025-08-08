@@ -11,26 +11,28 @@ import utils.Component;
 import utils.FormatUtils;
 
 public class SongToggleButton extends ToggleButton {
+
     static final String fxmlPath = Component.fxmlPath(SongToggleButton.class);
-
-    public String getSong(){return song.getText();}
-    public void setSong(String name){song.setText(name);}
-    public StringProperty songProperty(){return song.textProperty();}
-
-    public String getArtist(){return artist.getText();}
-    public void setArtist(String name){artist.setText(name);}
-    public StringProperty artistProperty(){return artist.textProperty();}
-
-    private final IntegerProperty duration = new SimpleIntegerProperty(0,"duration");
-
-    public int getDuration(){return duration.get();}
-    public void setDuration(int ms){duration.set(ms);}
-    public IntegerProperty durationProperty(){return duration;}
 
     public SongToggleButton(){
         super();
         Component.init(this,fxmlPath);
     }
+
+    public String getTitle(){return title.getText();}
+    public void setTitle(String name){
+        title.setText(name);}
+    public StringProperty titleProperty(){return title.textProperty();}
+
+    public String getArtist(){return artist.getText();}
+    public void setArtist(String name){artist.setText(name);}
+    public StringProperty artistProperty(){return artist.textProperty();}
+
+    private final IntegerProperty duration = new SimpleIntegerProperty(0);
+
+    public int getDuration(){return duration.get();}
+    public void setDuration(int ms){duration.set(ms);}
+    public IntegerProperty durationProperty(){return duration;}
 
     @FXML
     void initialize(){
@@ -42,7 +44,7 @@ public class SongToggleButton extends ToggleButton {
     }
 
     @FXML
-    private Label song;
+    private Label title;
     @FXML
     private Label artist;
     @FXML

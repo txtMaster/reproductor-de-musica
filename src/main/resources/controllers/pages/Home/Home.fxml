@@ -10,7 +10,6 @@
 <?import java.net.URL?>
 <?import java.lang.String?>
 <?import components.PrettySlider?>
-<?import components.SquareRegion?>
 <?import components.SongToggleButton?>
 <VBox
         xmlns="http://javafx.com/javafx"
@@ -20,6 +19,7 @@
         fx:controller="controllers.pages.Home">
     <fx:define>
         <ToggleGroup fx:id="grupoDeSecciones"/>
+        <ToggleGroup fx:id="playlistButtons"/>
     </fx:define>
     <stylesheets>
         <URL value="@../../../utils/reset.css" />
@@ -139,13 +139,14 @@
                                         Date
                                     </Label>
                                 </HBox>
-                                <ScrollPane VBox.vgrow="ALWAYS">
+                                <ScrollPane VBox.vgrow="ALWAYS" fx:id="scrollPlaylist">
                                     <VBox alignment="TOP_CENTER"
                                           styleClass="fit-child,s4"
                                           fx:id="playList">
-                                        <SongToggleButton
-                                                song="Random Song to LOOOOOOOOOOOOOOOOOOOOOOGGGG" artist="Random artist"/>
-                                        <SongToggleButton song="Random Song" artist="Random artist"/>
+                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
+                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
+                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
+                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
                                     </VBox>
                                 </ScrollPane>
                             </VBox>

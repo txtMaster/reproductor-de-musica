@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Library>
     <component>
-        <name>Mi Boton rojo</name>
-        <class>components.BotonRojo</class>
-    </component>
-    <component>
         <name>HBox relativo</name>
         <class>components.RelativeHBox</class>
     </component>
     <component>
         <name>Region cuadrado</name>
         <class>components.SquareRegion</class>
+    </component>
+    <component>
+        <name>Song ToggleButton</name>
+        <class>components.SongToggleButton</class>
     </component>
 </Library>

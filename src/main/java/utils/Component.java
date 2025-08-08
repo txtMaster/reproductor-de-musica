@@ -13,13 +13,14 @@ public class Component {
             FXMLLoader loader = new FXMLLoader(path);
             loader.setRoot(node);
             loader.setController(node);
+            loader.setClassLoader(node.getClass().getClassLoader());
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Error al cargar el FXML de MyButton", e);
+            throw new RuntimeException("Error al cargar el FXML", e);
         }
     }
     public static String fxmlPath(Class<?> nodeClass){
-        return nodeClass.getSimpleName()+"/"+nodeClass.getSimpleName()+".fxml";
+        return nodeClass.getSimpleName()+"/index.fxml";
     }
 }
 
