@@ -1,7 +1,5 @@
-package application;
+package libraries.demo.application;
 
-import javafx.scene.text.Font;
-import javafx.stage.StageStyle;
 import utils.FontUtils;
 import utils.path.View;
 import utils.SceneManager;
@@ -24,6 +22,7 @@ public class App extends Application {
         sceneManager = new SceneManager(stage,App.class);
         FontUtils.load("Inter-Regular.ttf","Inter-Bold.ttf","Inter-Light.ttf","Inter-Medium.ttf","Inter-Thin.ttf");
         sceneManager.showScene(View.HOME);
+        //new MemoryMonitor().start(stage);
     }
 
 }

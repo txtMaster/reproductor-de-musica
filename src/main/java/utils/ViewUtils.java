@@ -104,7 +104,6 @@ public class ViewUtils {
     }
     public static List<Color> getDominantColors(Image image){
         PixelReader reader = image.getPixelReader();
-        Map<Color,Integer> colors = new HashMap<>();
 
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
@@ -130,9 +129,17 @@ public class ViewUtils {
                 .limit(2)
                 .toList();
 
+
+
         Color mostCommon = sorted.get(0).getKey();
         Color secondCommon = sorted.size() > 1 ? sorted.get(1).getKey() : mostCommon;
-        return Arrays.stream(new Color[]{mostCommon,secondCommon}).toList();
+        reader = null;
+        return Arrays.stream(
+                mostCommon.getSaturation() >= secondCommon.getSaturation() ?
+                        new Color[]{mostCommon,secondCommon}
+                        :
+                        new Color[]{secondCommon,mostCommon}
+        ).toList();
     }
 
     public static Node getPartner(Node node, KeyCode key){

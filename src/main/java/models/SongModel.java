@@ -2,8 +2,13 @@ package models;
 
 import datas.SongData;
 import javafx.beans.property.*;
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import org.jaudiotagger.audio.AudioFile;
+import utils.ExplorerUtils;
 import utils.PlayerUtils;
+
+import java.io.ByteArrayInputStream;
 
 
 public class SongModel {
@@ -11,16 +16,17 @@ public class SongModel {
     private final StringProperty artist = new SimpleStringProperty();
     private final IntegerProperty duration = new SimpleIntegerProperty();
     private final StringProperty path = new SimpleStringProperty();
+    /*
     private final ObjectProperty<byte[]> imageData = new SimpleObjectProperty<>(null);
-
+    */
+    private final ObjectProperty<Image> artwork = new SimpleObjectProperty<>(null);
     public SongModel() {}
 
-    public SongModel(String title, String artist, int duration, String path, byte[] imageData) {
+    public SongModel(String title, String artist, int duration, String path) {
         setTitle(title);
         setArtist(artist);
         setDuration(duration);
         setPath(path);
-        setImageData(imageData);
     }
 
     public String getTitle() { return title.get(); }
@@ -39,15 +45,29 @@ public class SongModel {
     public void setPath(String value) { path.set(value); }
     public StringProperty pathProperty() { return path; }
 
-    public byte[] getImageData() { return imageData.get(); }
-    public void setImageData(byte[] data) { imageData.set(data); }
-    public ObjectProperty<byte[]> imageDataProperty() { return imageData; }
+
+    public Image getArtwork() { return artwork.get(); }
+    public void setArtwork(Image image) { artwork.set(image); }
+    public ObjectProperty<Image> artworkProperty() { return artwork; }
 
     public void set(SongData data){
         setArtist(data.getArtist());
         setTitle(data.getTitle());
         setDuration(data.getDuration());
-        setImageData(data.getImageData());
         setPath(data.getPath());
+    }
+
+    public void processImagePath(){
+        artwork.set(null);
+        try {
+            byte[] a = PlayerUtils.getImageData(ExplorerUtils.getAudioFile(getPath()));
+            if(a == null) return;
+            setArtwork(
+                    new Image(new ByteArrayInputStream(a), 300, 300, true, true)
+            );
+            a = null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

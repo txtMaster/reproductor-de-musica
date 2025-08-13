@@ -26,7 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
-import mappers.SongMapper;
 import models.SongModel;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -82,7 +81,6 @@ public class Home extends Controller {
     public Button btnPrevious;
     public PrettySlider timeStatus;
 
-    public List<SongData> songsData = new ArrayList<SongData>();
     public SongModel currentSongModel = new SongModel();
 
     //para el slider
@@ -92,20 +90,66 @@ public class Home extends Controller {
     @FXML
     void initialize(){
 
-        mediaPlayerFactory = new MediaPlayerFactory();
+        mediaPlayerFactory = new MediaPlayerFactory("--no-video", "--no-xlib");;
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
 
         songName.textProperty().bind(currentSongModel.titleProperty());
         artistName.textProperty().bind(currentSongModel.artistProperty());
         totalTime.textProperty().bind(
                 Bindings.createStringBinding(
-                        ()->{
-                            return FormatUtils.msToString(currentSongModel.getDuration());
-                        },currentSongModel.durationProperty()
+                        ()->FormatUtils.msToString(currentSongModel.getDuration()),
+                        currentSongModel.durationProperty()
                 )
         );
-        currentSongModel.imageDataProperty().addListener((e,pre,pos)->{
-            this.artwork = PlayerUtils.getArtwork(pos);
+        currentSongModel.artworkProperty().addListener((e,pre,pos)->{
+            if(pos == null){
+                loaderImage = ()->{};
+                songName.setStyle(null);
+                artistName.setStyle(null);
+                timeStatus.setStyle(null);
+                cover.setBackground(null);
+                cover.applyCss();
+                cover.layout();
+            }else{
+                loaderImage = ()-> {
+                    ViewUtils.setOnlyBgImage(cover, currentSongModel.getArtwork());
+                };
+                List<Color> colors = ViewUtils.getDominantColors(pos);
+
+                if(colors.size() != 2) return;
+
+                Color
+                        primaryColor = colors.get(0), secondaryColor = colors.get(1);
+
+                double
+                        saturation1 = primaryColor.getSaturation(),
+                        saturation2 = secondaryColor.getSaturation();
+
+                //si la saturacion es 0 (sin tono), no editarlo. Caso contrario limitar saturacion a un rango
+                saturation1 = saturation1 == 0 ?
+                        0.0 : Math.max(0.15,Math.min(saturation1,0.3));
+                saturation2 = saturation2 == 0 ?
+                        0.0 : Math.max(0.02,Math.min(saturation2,0.10));
+
+                songName.setStyle(
+                        "-fx-text-fill:hsb("+
+                                primaryColor.getHue()+","+
+                                (saturation1 * 100) + "%,"+
+                                "86%);"
+                );
+                artistName.setStyle(
+                        "-fx-text-fill:hsb("+
+                                secondaryColor.getHue()+","+
+                                (saturation2 * 100) + "%,"+
+                                "74%);"
+                );
+                timeStatus.setStyle(
+                        "main-color:hsb("+
+                                primaryColor.getHue()+","+
+                                ((saturation1 * 1.6) * 100) + "%,"+
+                                "86%);"
+                );
+            }
         });
 
 
@@ -174,7 +218,7 @@ public class Home extends Controller {
         coverRectangleClip.widthProperty().bind(cover.widthProperty());
         coverRectangleClip.heightProperty().bind(cover.heightProperty());
         cover.heightProperty().addListener((obs,prev,next)->{
-            if(artwork != null) loaderImage.run();
+            if(currentSongModel.getArtwork() != null) loaderImage.run();
         });
         AtomicReference<Double> progress = new AtomicReference<>((double) 0);
         Timeline progressUpdater = new Timeline(
@@ -300,14 +344,16 @@ public class Home extends Controller {
 
         if(selectedDirectory == null || !selectedDirectory.isDirectory())return;
 
-        playList.getChildren().clear();
+        Platform.runLater(()->playList.getChildren().clear());
 
-        Home self = this;
+        List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
+
+        carpeta = null;
+        selectedDirectory = null;
 
         Task<Void> loadSongsTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
                 AudioFile audio;
                 for (File fileAudio : fileAudios){
                     SongToggleButton songBtn = new SongToggleButton();
@@ -317,81 +363,19 @@ public class Home extends Controller {
                         continue;
                     }
                     SongData songData = new SongData(audio);
-                    /*
-                    Image artwork = PlayerUtils.getArtwork(audio);
-                     */
 
                     songBtn.setTitle(songData.getTitle());
                     songBtn.setArtist(songData.getArtist());
                     songBtn.setDuration(songData.getDuration() * 1000);
+                    audio = null;
 
                     songBtn.selectedProperty().addListener((obs,was,is)->{
                         if(!is) return;
                         currentSong.controls().stop();
                         currentSongModel.set(songData);
-                        /*
-                        self.artwork = artwork;
-                        */
-                        if(self.artwork == null){
-                            loaderImage = ()->{};
-                            songName.setStyle(null);
-                            artistName.setStyle(null);
-                            timeStatus.setStyle(null);
-                            cover.setBackground(null);
-                            cover.applyCss();
-                            cover.layout();
-                        }else{
-                            loaderImage = ()-> {
-                                ViewUtils.setOnlyBgImage(cover, self.artwork);
-                            };
-                            List<Color> colors = ViewUtils.getDominantColors(self.artwork);
-
-                            if(colors.size() != 2) return;
-
-                            Color primaryColor, secondaryColor;
-
-                            //preferir al color que tiene mas saturacion
-                            if(colors.getFirst().getSaturation() >= colors.get(1).getSaturation()){
-                                primaryColor = colors.getFirst();
-                                secondaryColor = colors.get(1);
-                            }else{
-                                primaryColor = colors.get(1);
-                                secondaryColor = colors.getFirst();
-                            }
-
-                            double
-                                    saturation1 = primaryColor.getSaturation(),
-                                    saturation2 = secondaryColor.getSaturation();
-
-                            //si la saturacion es 0 (sin tono), no editarlo. Caso contrario limitar saturacion a un rango
-                            saturation1 = saturation1 == 0 ?
-                                    0.0 : Math.max(0.15,Math.min(saturation1,0.3));
-                            saturation2 = saturation2 == 0 ?
-                                    0.0 : Math.max(0.02,Math.min(saturation2,0.10));
-
-                            songName.setStyle(
-                                    "-fx-text-fill:hsb("+
-                                            primaryColor.getHue()+","+
-                                            (saturation1 * 100) + "%,"+
-                                            "86%);"
-                            );
-                            artistName.setStyle(
-                                    "-fx-text-fill:hsb("+
-                                            secondaryColor.getHue()+","+
-                                            (saturation2 * 100) + "%,"+
-                                            "74%);"
-                            );
-                            timeStatus.setStyle(
-                                    "main-color:hsb("+
-                                            primaryColor.getHue()+","+
-                                            ((saturation1 * 1.6) * 100) + "%,"+
-                                            "86%);"
-                            );
-                        }
-
-                        loaderImage.run();
-
+                        currentSongModel.processImagePath();
                         currentSong.media().play(songData.getPath());
+                        loaderImage.run();
                     });
 
                     Platform.runLater(()->{

@@ -14,7 +14,7 @@
 <?import javafx.scene.image.Image?>
 <?import java.net.URL?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="application.HelloController">
+      fx:controller="libraries.demo.application.HelloController">
     <children>
 
         <Label fx:id="welcomeText"/>
