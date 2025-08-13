@@ -8,10 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -25,17 +22,22 @@ public class ViewUtils {
     public static void setOnlyBgImage(Region region, Image image){
         if(image == null) return;
         Background oldBackground = region.getBackground();
-        if (oldBackground != null && !oldBackground.getImages().isEmpty()) {
-            BackgroundImage oldBgImg = oldBackground.getImages().getFirst();
-            BackgroundImage nuevoBgImg = new BackgroundImage(
-                    image,
-                    oldBgImg.getRepeatX(),
-                    oldBgImg.getRepeatY(),
-                    oldBgImg.getPosition(),
-                    oldBgImg.getSize()
-            );
-            region.setBackground(new Background(nuevoBgImg));
-        }
+
+        BackgroundImage nuevoBgImg = new BackgroundImage(
+                image,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(
+                        BackgroundSize.AUTO,
+                        100,
+                        false,
+                        true,
+                        false,
+                        true
+                )
+        );
+        region.setBackground(new Background(nuevoBgImg));
     }
     public static void changeToDraggable(
             Stage stage

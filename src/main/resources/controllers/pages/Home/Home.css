@@ -9,14 +9,13 @@
 }
 
 #cover{
-    -fx-background-color:main-color-lighten-4;
-    -fx-background-image: url(../../../png/perilla.png);
+    -fx-border-radius: 20px 20px 20px 20px;
+}
+
+#cover.test{
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: auto 100%;
-    -fx-background-radius: 20px 20px 20px 20px;
-    -fx-border-radius: 20px 20px 20px 20px;
-
 }
 
 #coverRectangleClip{
@@ -165,6 +164,7 @@ Button.pause{
 }
 
 #folders .toggle-button{
+    -fx-pannable: false;
     -fx-text-fill: main-color-lighten-9;
     -fx-pref-width:Infinity;
     -fx-background-color:transparent;
@@ -237,4 +237,40 @@ Button.pause{
     -fx-background-color:main-color-lighten-4;
 }
 .song-toggle-button .text-vbox{
+}
+
+
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent; /* fondo del scrollbar */
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-opacity: 1; /* controla visibilidad */
+}
+
+.scroll-bar:vertical{
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: main-color-lighten-4;
+    -fx-background-radius: 2em;
+}
+/* Ocultar los botones de incremento/decremento (flechas) */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: "";
+    -fx-opacity: 0;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-pref-width:0;
+    -fx-pref-height:0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
 }

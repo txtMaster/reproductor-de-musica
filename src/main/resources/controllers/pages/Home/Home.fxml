@@ -143,10 +143,12 @@
                                     <VBox alignment="TOP_CENTER"
                                           styleClass="fit-child,s4"
                                           fx:id="playList">
-                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
-                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
-                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
-                                        <SongToggleButton artist="RANDOM" title="UNKNOWN" toggleGroup="$playlistButtons"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
+                                        <SongToggleButton artist="RANDOM"  title="WAAA"/>
                                     </VBox>
                                 </ScrollPane>
                             </VBox>

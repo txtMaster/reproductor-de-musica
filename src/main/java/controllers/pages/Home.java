@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
+import libraries.demo.application.App;
 import models.SongModel;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -43,43 +44,37 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
 
+    public MediaPlayer currentSong;
+    public MediaPlayerFactory mediaPlayerFactory;
     public ToggleGroup songButtonsGroup;
-    public ScrollPane scrollPlaylist;
-
     {
         songButtonsGroup = new ToggleGroup();
     }
-
-    public PrettySlider volumeSlider;
-    public VBox options;
-    public Button closeBtn;
     Shortcuts shortcuts;
 
-    public MediaPlayer currentSong;
-    public MediaPlayerFactory mediaPlayerFactory;
-
-    public RelativeHBox player;
-    public SquareStackPane cover;
-    public Label artistName;
-    public Label songName;
-    public Image artwork = null;
-    public Label currentTime;
-    public Label totalTime;
-    public VBox folders;
-    public ToggleButton inicio;
-    public ToggleGroup grupoDeSecciones;
-    public ScrollPane secciones;
-    public ImageView testImage;
-    public VBox pestanas;
-    public ToggleButton abrirCarpeta;
-    public Button pause;
-    public VBox playList;
-    public SquareStackPane squareCoverWrapper;
-
-    public Runnable loaderImage = ()->{};
-    public Rectangle coverRectangleClip;
-    public Button btnPrevious;
-    public PrettySlider timeStatus;
+    @FXML public ScrollPane scrollPlaylist;
+    @FXML public PrettySlider volumeSlider;
+    @FXML public VBox options;
+    @FXML public Button closeBtn;
+    @FXML public RelativeHBox player;
+    @FXML public SquareStackPane cover;
+    @FXML public Label artistName;
+    @FXML public Label songName;
+    @FXML public Label currentTime;
+    @FXML public Label totalTime;
+    @FXML public VBox folders;
+    @FXML public ToggleButton inicio;
+    @FXML public ToggleGroup grupoDeSecciones;
+    @FXML public ScrollPane secciones;
+    @FXML public ImageView testImage;
+    @FXML public VBox pestanas;
+    @FXML public ToggleButton abrirCarpeta;
+    @FXML public Button pause;
+    @FXML public VBox playList;
+    @FXML public SquareStackPane squareCoverWrapper;
+    @FXML public Rectangle coverRectangleClip;
+    @FXML public Button btnPrevious;
+    @FXML public PrettySlider timeStatus;
 
     public SongModel currentSongModel = new SongModel();
 
@@ -103,17 +98,12 @@ public class Home extends Controller {
         );
         currentSongModel.artworkProperty().addListener((e,pre,pos)->{
             if(pos == null){
-                loaderImage = ()->{};
                 songName.setStyle(null);
                 artistName.setStyle(null);
                 timeStatus.setStyle(null);
-                cover.setBackground(null);
-                cover.applyCss();
-                cover.layout();
             }else{
-                loaderImage = ()-> {
-                    ViewUtils.setOnlyBgImage(cover, currentSongModel.getArtwork());
-                };
+                ViewUtils.setOnlyBgImage(cover,pos);
+
                 List<Color> colors = ViewUtils.getDominantColors(pos);
 
                 if(colors.size() != 2) return;
@@ -218,7 +208,6 @@ public class Home extends Controller {
         coverRectangleClip.widthProperty().bind(cover.widthProperty());
         coverRectangleClip.heightProperty().bind(cover.heightProperty());
         cover.heightProperty().addListener((obs,prev,next)->{
-            if(currentSongModel.getArtwork() != null) loaderImage.run();
         });
         AtomicReference<Double> progress = new AtomicReference<>((double) 0);
         Timeline progressUpdater = new Timeline(
@@ -375,7 +364,6 @@ public class Home extends Controller {
                         currentSongModel.set(songData);
                         currentSongModel.processImagePath();
                         currentSong.media().play(songData.getPath());
-                        loaderImage.run();
                     });
 
                     Platform.runLater(()->{

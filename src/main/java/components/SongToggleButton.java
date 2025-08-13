@@ -20,8 +20,7 @@ public class SongToggleButton extends ToggleButton {
     }
 
     public String getTitle(){return title.getText();}
-    public void setTitle(String name){
-        title.setText(name);}
+    public void setTitle(String name){title.setText(name);}
     public StringProperty titleProperty(){return title.textProperty();}
 
     public String getArtist(){return artist.getText();}
