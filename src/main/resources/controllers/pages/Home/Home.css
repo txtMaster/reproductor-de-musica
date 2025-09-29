@@ -6,6 +6,8 @@
     -fx-pref-height:550px;
     -fx-pref-width:700px;
     -fx-padding:8px;
+    -s-1:4px;
+    -s-2:8px;
 }
 
 #cover{
@@ -176,9 +178,7 @@ Button.pause{
     -fx-background-color:main-color-lighten-4;
     -fx-font-family: "Inter Medium";
 }
-#pestanas{
-    
-}
+
 #options{
     -fx-alignment:bottom_center;
 }
@@ -188,15 +188,30 @@ Button.pause{
     -fx-max-width:Infinity;
     -fx-text-fill: main-color-lighten-9;
 }
-#playlist{
+.custom-list-view{
+    -fx-spacing:0;
+}
+.scroll-bar{
+    -fx-min-width:8px;
+}
+
+#playListContainer .list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-radius:20;
+}
+
+#playListContainer .list-view .cell{
+    -fx-padding: 2px 0px 2px 0px;
+    -fx-margin:0px;
+    -fx-background-color:transparent;
 }
 
 .songButton,.song-toggle-button{
-    -fx-pref-height:5em;
     /*-fx-background-radius:20;*/
 }
-.song-toggle-button{
-    -fx-background-color:transparent;
+.song-card{
+    -fx-alignment:center;
     -fx-min-height:4em;
     -fx-max-height:4em;
     -fx-pref-height:4em;
@@ -204,40 +219,34 @@ Button.pause{
     fx-background-insets:0;
     -fx-padding:0;
 
-}
-.song-toggle-button .container-hbox{
     -fx-spacing:0em;
     -fx-spacing:1em;
+
     -fx-background-color:main-color-lighten-1;
 }
-.song-toggle-button .cover-stackpane{
+
+
+
+.song-list-cell:selected .song-card{
+    -fx-background-color:main-color-lighten-4 !important;
 }
 
-
-.song-toggle-button:selected .container-hbox{
-    -fx-background-color:main-color-lighten-3 !important;
-}
-
-.song-toggle-button:hover .container-hbox,
-.song-toggle-button:focused .container-hbox{
+.song-list-cell:hover .song-card{
     -fx-background-color:main-color-lighten-2;
 }
 
-.song-toggle-button .duration-label{
+.song-card .duration-label{
     -fx-text-fill:main-color-lighten-8;
     -fx-padding:0 1em 0 0;
 }
-.song-toggle-button .artist-label{
+.song-card .artist-label{
     -fx-text-fill:main-color-lighten-7;
 }
-.song-toggle-button .title-label{
+.song-card .title-label{
     -fx-text-fill:main-color-lighten-9;
 }
-.song-toggle-button .cover-stackpane{
-    -fx-background-color:main-color-lighten-4;
-}
-.song-toggle-button .text-vbox{
-}
+.song-card .cover-stackpane{}
+.song-card .text-vbox{}
 
 
 
@@ -259,6 +268,8 @@ Button.pause{
 .scroll-bar .thumb {
     -fx-background-color: main-color-lighten-4;
     -fx-background-radius: 2em;
+    -fx-pref-height:2em;
+    -fx-min-height:2em;
 }
 /* Ocultar los botones de incremento/decremento (flechas) */
 .scroll-bar .increment-button,

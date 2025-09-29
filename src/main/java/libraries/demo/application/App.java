@@ -13,7 +13,7 @@ public class App extends Application {
 
     public static SceneManager sceneManager;
 
-    public static void main(String[] args) {
+    void main() {
         launch();
     }
 

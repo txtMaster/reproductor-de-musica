@@ -14,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -169,6 +170,21 @@ public class ViewUtils {
         }
         //index = ((toNext) ? (index + 1) : ((index - 1) + size)) % size;
         return partners.get(index);
+    }
+    public static Image processImagePath(String path){
+        return processImagePath(path,500);
+    }
+    public static Image processThumbPath(String path){
+        return processImagePath(path, 50);
+    }
+    public static Image processImagePath(String path,int size){
+        try {
+            byte[] a = PlayerUtils.getImageData(ExplorerUtils.getAudioFile(path));
+            if(a == null) return null;
+            return new Image(new ByteArrayInputStream(a), size, size, true, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

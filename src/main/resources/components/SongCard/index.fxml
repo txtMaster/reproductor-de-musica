@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import components.SquareStackPane?>
+<fx:root type="HBox"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         styleClass="song-card"
+         stylesheets="@index.css">
+    <SquareStackPane styleClass="cover-stackpane" fx:id="cover"/>
+    <VBox HBox.hgrow="ALWAYS"
+          styleClass="text-vbox">
+        <Label
+                fx:id="title"
+                text="song title"
+                styleClass="title-label"/>
+        <Label
+                fx:id="artist"
+                text="artist"
+                styleClass="artist-label"/>
+    </VBox>
+    <Label
+            fx:id="durationLb"
+            text="00:00"
+            styleClass="duration-label"/>
+</fx:root>

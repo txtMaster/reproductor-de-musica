@@ -10,6 +10,8 @@ import utils.PlayerUtils;
 
 import java.io.ByteArrayInputStream;
 
+import static utils.ViewUtils.processImagePath;
+
 
 public class SongModel {
     private final StringProperty title = new SimpleStringProperty();
@@ -56,18 +58,10 @@ public class SongModel {
         setDuration(data.getDuration());
         setPath(data.getPath());
     }
-
-    public void processImagePath(){
+    public void calcImgPath(){
+        Image img = processImagePath(getPath());
+        if(img == null)return;
         artwork.set(null);
-        try {
-            byte[] a = PlayerUtils.getImageData(ExplorerUtils.getAudioFile(getPath()));
-            if(a == null) return;
-            setArtwork(
-                    new Image(new ByteArrayInputStream(a), 300, 300, true, true)
-            );
-            a = null;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.setArtwork(img);
     }
 }

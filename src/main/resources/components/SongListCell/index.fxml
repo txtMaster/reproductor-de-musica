@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.*?>
 <?import components.SquareStackPane?>
 <?import components.SongCard?>
-<fx:root type="ToggleButton"
+<fx:root type="ListCell"
          xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         styleClass="song-toggle-button"
+         styleClass="song-list-cell"
          stylesheets="@index.css">
     <graphic>
         <SongCard fx:id="songCard"/>

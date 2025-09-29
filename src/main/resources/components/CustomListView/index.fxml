@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import components.SquareStackPane?>
-<?import components.SongCard?>
-<fx:root type="ToggleButton"
+
+<fx:root type="HBox"
          xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         styleClass="song-toggle-button"
+         styleClass="custom-list-view"
          stylesheets="@index.css">
-    <graphic>
-        <SongCard fx:id="songCard"/>
-    </graphic>
+    <ListView fx:id="listView" HBox.hgrow="ALWAYS"/>
+    <ScrollBar fx:id="scroll" orientation="VERTICAL"/>
 </fx:root>

@@ -1,0 +1,9 @@
+#listView .scroll-bar:vertical,
+#listView .scroll-bar:horizontal {
+    -fx-opacity: 0 !important;
+    -fx-pref-width: 0 !important;
+    -fx-max-width: 0 !important;
+    -fx-pref-height: 0 !important;
+    -fx-max-height: 0 !important;
+    -fx-padding: 0 !important;
+}

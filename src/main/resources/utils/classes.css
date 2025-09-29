@@ -1,3 +1,6 @@
+.root{
+
+}
 .resizable{
     -fx-pref-height: -1;
     -fx-pref-width: -1;

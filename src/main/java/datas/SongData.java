@@ -27,4 +27,9 @@ public class SongData {
     public String getArtist() { return artist; }
     public int getDuration() { return duration; }
     public String getPath() { return path; }
+
+
+    public static SongData fxml(String title, String artist, int duration, String path){
+        return new SongData(title,artist,duration,path);
+    }
 }

@@ -1,9 +1,6 @@
 package controllers.pages;
 
-import components.PrettySlider;
-import components.RelativeHBox;
-import components.SongToggleButton;
-import components.SquareStackPane;
+import components.*;
 import controllers.Controller;
 import datas.SongData;
 import javafx.animation.Animation;
@@ -26,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
-import libraries.demo.application.App;
 import models.SongModel;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -37,8 +33,8 @@ import uk.co.caprica.vlcj.player.base.State;
 import utils.*;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,15 +42,15 @@ public class Home extends Controller {
 
     public MediaPlayer currentSong;
     public MediaPlayerFactory mediaPlayerFactory;
-    public ToggleGroup songButtonsGroup;
-    {
-        songButtonsGroup = new ToggleGroup();
-    }
+    public WrapperPlaylistListView playListContainer;
+
     Shortcuts shortcuts;
 
     @FXML public ScrollPane scrollPlaylist;
     @FXML public PrettySlider volumeSlider;
     @FXML public VBox options;
+
+    @FXML public SongToggleButton lastBtn;
     @FXML public Button closeBtn;
     @FXML public RelativeHBox player;
     @FXML public SquareStackPane cover;
@@ -70,7 +66,7 @@ public class Home extends Controller {
     @FXML public VBox pestanas;
     @FXML public ToggleButton abrirCarpeta;
     @FXML public Button pause;
-    @FXML public VBox playList;
+    @FXML public ListView<SongData> playlist;
     @FXML public SquareStackPane squareCoverWrapper;
     @FXML public Rectangle coverRectangleClip;
     @FXML public Button btnPrevious;
@@ -78,12 +74,22 @@ public class Home extends Controller {
 
     public SongModel currentSongModel = new SongModel();
 
+    ThumbCache imageCache = new ThumbCache();
+
     //para el slider
     long skipTime = 0L;
     AtomicBoolean interactuandoConElSlider = new AtomicBoolean(false);
 
+    public void playSong(SongData data){
+        currentSong.controls().stop();
+        currentSongModel.set(data);
+        currentSongModel.calcImgPath();
+        currentSong.media().play(currentSongModel.getPath());
+    }
+
     @FXML
     void initialize(){
+        
 
         mediaPlayerFactory = new MediaPlayerFactory("--no-video", "--no-xlib");;
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
@@ -262,8 +268,20 @@ public class Home extends Controller {
                 );
             });
         });
+        
+        playlist = playListContainer.getListView();
 
-        playList.addEventFilter(KeyEvent.KEY_PRESSED,e->{
+        /*
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.prefWidthProperty().bind(listView.widthProperty());
+        */
+        playlist.setCellFactory(listView -> new SongListCell(imageCache));
+
+        playlist.getSelectionModel().selectedItemProperty().addListener((obs,pre,pos)->{
+
+            if(pos != null) playSong(pos);
+        });
+        playlist.addEventFilter(KeyEvent.KEY_PRESSED, e->{
             EventTarget songBtn = e.getTarget();
             Node nextNode = ViewUtils.getPartner(
                     (Node)songBtn,
@@ -273,6 +291,7 @@ public class Home extends Controller {
             nextNode.requestFocus();
             e.consume();
         });
+
     }
 
     @Override
@@ -333,7 +352,15 @@ public class Home extends Controller {
 
         if(selectedDirectory == null || !selectedDirectory.isDirectory())return;
 
-        Platform.runLater(()->playList.getChildren().clear());
+        Platform.runLater(()-> {
+            imageCache.clear();
+            playlist.getItems().clear();
+            /*
+            if(btn instanceof SongToggleButton songBtn){
+                songBtn.setToggleGroup(songButtonsGroup);
+            }
+             */
+        });
 
         List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
 
@@ -345,40 +372,26 @@ public class Home extends Controller {
             protected Void call() throws Exception {
                 AudioFile audio;
                 for (File fileAudio : fileAudios){
-                    SongToggleButton songBtn = new SongToggleButton();
                     try{
                         audio = AudioFileIO.read(new java.io.File(fileAudio.getAbsolutePath()));
-                    } catch (Exception e) {
-                        continue;
-                    }
-                    SongData songData = new SongData(audio);
-
-                    songBtn.setTitle(songData.getTitle());
-                    songBtn.setArtist(songData.getArtist());
-                    songBtn.setDuration(songData.getDuration() * 1000);
-                    audio = null;
-
-                    songBtn.selectedProperty().addListener((obs,was,is)->{
-                        if(!is) return;
-                        currentSong.controls().stop();
-                        currentSongModel.set(songData);
-                        currentSongModel.processImagePath();
-                        currentSong.media().play(songData.getPath());
-                    });
-
-                    Platform.runLater(()->{
-                        songBtn.setToggleGroup(songButtonsGroup);
-                        playList.getChildren().add(songBtn);
-                    });
+                        SongData songData = new SongData(audio);
+                        imageCache.computeIfAbsent(
+                                songData.getPath(),
+                                ViewUtils::processThumbPath
+                        );
+                        Platform.runLater(()-> {
+                            playlist.getItems().add(songData);
+                        });
+                    } catch (Exception _) {}
                 }
                 return null;
             }
         };
 
         loadSongsTask.setOnFailed(e -> {
-            playList.getChildren().clear();
-            Label error = new Label("Error al cargar audios");
-            playList.getChildren().add(error);
+            playlist.getItems().clear();
+            //Label error = new Label("Error al cargar audios");
+            //playList.getChildren().add(error);
             loadSongsTask.getException().printStackTrace();
         });
 
@@ -396,6 +409,8 @@ public class Home extends Controller {
         if (mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
         }
+        Platform.exit();
+        System.exit(0);
     }
 
     @FXML

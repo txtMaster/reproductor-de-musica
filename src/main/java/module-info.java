@@ -15,6 +15,8 @@ module libraries.demo {
     requires jaudiotagger;
     requires java.desktop;
     requires java.management;
+    requires javafx.base;
+    requires javafx.graphics;
 
     opens libraries.demo to javafx.fxml;
     opens components to javafx.fxml;
