@@ -310,15 +310,13 @@ public class Home extends Controller {
     public void onSceneAssigned(Scene scene){
         shortcuts = new Shortcuts();
         shortcuts.actions.put(KeyEvent.KEY_PRESSED,(e)->{
-            System.out.println(e.getCode().toString());
+            //System.out.println(e.getCode().toString());
             boolean toConsume = true;
             long skipTime = 0;
             switch (e.getCode()){
+                case HOME,END -> {}
                 case LEFT-> skipTime = -5000;
                 case RIGHT-> skipTime = 5000;
-                case SPACE -> PlayerUtils.safeAction(currentSong, PlayerUtils::togglePlaying);
-                case HOME -> PlayerUtils.safeAction(currentSong,PlayerUtils::timeToInit);
-                case END -> PlayerUtils.safeAction(currentSong,PlayerUtils::timeToEnd);
                 default -> toConsume = false;
             };
             if(toConsume)e.consume();
@@ -333,7 +331,21 @@ public class Home extends Controller {
             timeStatus.setValue(newPercentage);
         });
         shortcuts.actions.put(KeyEvent.KEY_RELEASED,(e)->{
+            boolean toConsume = true;
             switch (e.getCode()){
+                case SPACE -> PlayerUtils.safeAction(
+                        currentSong,
+                        PlayerUtils::togglePlaying,
+                        (mp)->{
+                            playlist.getSelectionModel().selectFirst();
+                        }
+                    );
+                case HOME -> PlayerUtils.safeAction(currentSong,(mp)->{
+                    if(mp.status().time() >= 5000)PlayerUtils.timeToInit(mp);
+                    else previousSong(true);
+                });
+                case END -> PlayerUtils.safeAction(currentSong,
+                        (mp)->nextSong(true));
                 case LEFT,RIGHT -> {
                     currentSong.controls().skipTime(skipTime);
                     currentTime.setText(
@@ -344,8 +356,9 @@ public class Home extends Controller {
                     interactuandoConElSlider.set(false);
                     skipTime = 0;
                 }
-                default -> {}
+                default -> toConsume = false;
             }
+            if(toConsume)e.consume();
         });
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED,shortcuts.run);
@@ -367,6 +380,7 @@ public class Home extends Controller {
         Platform.runLater(()-> {
             imageCache.clear();
             songs.clear();
+            currentSongIndex.set(-1);
         });
 
         List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
@@ -427,49 +441,61 @@ public class Home extends Controller {
 
     @FXML
     public void onActionPrevious(ActionEvent actionEvent) {
-        if(previousSong()){
-            playlist.scrollTo(playlist.getSelectionModel().getSelectedIndex());
-        }
+        previousSong(true);
     }
-
+    @FXML
     public void onActionNext(ActionEvent actionEvent) {
-        if(nextSong()){
-            playlist.scrollTo(playlist.getSelectionModel().getSelectedIndex());
-        };
+        nextSong(true);
     }
 
 
-    public boolean previousSong(){
+    public boolean previousSong(boolean focusItem){
         if(songs.isEmpty()) return false;
         int index = currentSongIndex.get();
-        if (index > 0) --index;
-        else index = songs.size()-1;
-        currentSongIndex.set(index);
-        playlist.getSelectionModel().select(index);
+        //si el indice es mayor a la lista, regresar a la ultima cancion
+        if (index >= songs.size())
+            currentSongIndex.set(songs.size()-1);
+        //si el indice esta dentro de la lista, retroceder una posicion
+        else if (index > 0)
+            currentSongIndex.set(index-1);
+        //si el indice es menor a la lista ir al ultimo elemento
+        else {
+            currentSongIndex.set(songs.size() - 1);
+        }
+        playlist.getSelectionModel().select(currentSongIndex.get());
+        index = playlist.getSelectionModel().getSelectedIndex();
+        if (focusItem) ViewUtils.safeMoveScroll(
+                playlist, index + 2 >= songs.size()  ?
+                index :index - 2
+        );
         return true;
     }
-    public boolean nextSong(){
+    public boolean nextSong(boolean focusItem){
         if(songs.isEmpty()) return false;
         int index = currentSongIndex.get() + 1;
-        if (index >= songs.size()) index = 0;
-        currentSongIndex.set(index);
-        playlist.getSelectionModel().select(index);
+        //si el indice esta fuera de la lista ir al primer elemento
+        if (index >= songs.size() || index < 0) {
+            currentSongIndex.set(0);
+        }else currentSongIndex.set(index);
+        playlist.getSelectionModel().select(currentSongIndex.get());
+        index = playlist.getSelectionModel().getSelectedIndex();
+        if (focusItem) ViewUtils.safeMoveScroll(
+                playlist,
+                index + 2 >= songs.size() ?
+                index : index - 2
+        );
         return true;
-    }
-
-    public void repeatSong(){
-        if(
-                currentSong.status().state() == State.NOTHING_SPECIAL || currentSong.status().state() == State.STOPPED
-        ){}
     }
 
     public void toggleSong(){
         switch (loopBtn.getState()){
-            case LOOP_ALL -> nextSong();
-            case LOOP_ONE -> repeatSong();
-            case NO_LOOP -> {
-                if(currentSongIndex.get() < songs.size()-1) nextSong();
+            case LOOP_ALL -> {
+                if (currentSongIndex.get() < songs.size()) nextSong(false);
             }
+            case NO_LOOP -> {
+                if(currentSongIndex.get() < songs.size()-1) nextSong(false);
+            }
+            default -> {}
         }
     }
 }

@@ -95,6 +95,10 @@ public class PlayerUtils {
     public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback){
         if(notEmpty(mediaPlayer)) callback.accept(mediaPlayer);
     }
+    public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback,Consumer<MediaPlayer> ifEmptyCallback){
+        if(notEmpty(mediaPlayer)) callback.accept(mediaPlayer);
+        else ifEmptyCallback.accept(mediaPlayer);
+    }
     public static long getTime(MediaPlayer mediaPlayer){
         return mediaPlayer.status().time();
     }

@@ -1,10 +1,13 @@
 package utils;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyCode;
@@ -185,6 +188,13 @@ public class ViewUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    public static void safeMoveScroll(ListView<?> listView, int index) {
+        Platform.runLater(()->{
+            listView.scrollTo(
+                    Math.clamp(index, 0,listView.getItems().size()-1)
+            );
+        });
     }
 }
 
