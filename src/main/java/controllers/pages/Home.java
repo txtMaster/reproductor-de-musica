@@ -3,11 +3,14 @@ package controllers.pages;
 import components.*;
 import controllers.Controller;
 import datas.SongData;
+import enums.LoopMode;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -15,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -34,8 +36,8 @@ import utils.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
@@ -43,6 +45,8 @@ public class Home extends Controller {
     public MediaPlayer currentSong;
     public MediaPlayerFactory mediaPlayerFactory;
     public WrapperPlaylistListView playListContainer;
+    public TripleStateButton loopBtn;
+    public Button btnNext;
 
     Shortcuts shortcuts;
 
@@ -73,6 +77,8 @@ public class Home extends Controller {
     @FXML public PrettySlider timeStatus;
 
     public SongModel currentSongModel = new SongModel();
+    public ObservableList<SongData> songs = FXCollections.observableArrayList();
+    AtomicInteger currentSongIndex = new AtomicInteger(0);
 
     ThumbCache imageCache = new ThumbCache();
 
@@ -89,7 +95,6 @@ public class Home extends Controller {
 
     @FXML
     void initialize(){
-        
 
         mediaPlayerFactory = new MediaPlayerFactory("--no-video", "--no-xlib");;
         currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
@@ -153,6 +158,10 @@ public class Home extends Controller {
             currentSong.audio().setVolume(pos.intValue());
         });
 
+        loopBtn.onChangeState = e->{
+            currentSong.controls().setRepeat(e == LoopMode.LOOP_ONE);
+        };
+
         currentSong.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
 
             @Override
@@ -188,8 +197,10 @@ public class Home extends Controller {
             @Override
             public void finished(MediaPlayer mediaPlayer) {
                 super.finished(mediaPlayer);
+
                 Platform.runLater(()->{
                     pause.getStyleClass().remove("playing");
+                    toggleSong();
                 });
             }
 
@@ -270,16 +281,17 @@ public class Home extends Controller {
         });
         
         playlist = playListContainer.getListView();
+        playlist.setItems(songs);
 
-        /*
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.prefWidthProperty().bind(listView.widthProperty());
-        */
         playlist.setCellFactory(listView -> new SongListCell(imageCache));
 
         playlist.getSelectionModel().selectedItemProperty().addListener((obs,pre,pos)->{
 
-            if(pos != null) playSong(pos);
+            if(pos == null) return;
+            currentSongIndex.set(
+                    playlist.getSelectionModel().getSelectedIndex()
+            );
+            playSong(pos);
         });
         playlist.addEventFilter(KeyEvent.KEY_PRESSED, e->{
             EventTarget songBtn = e.getTarget();
@@ -354,18 +366,10 @@ public class Home extends Controller {
 
         Platform.runLater(()-> {
             imageCache.clear();
-            playlist.getItems().clear();
-            /*
-            if(btn instanceof SongToggleButton songBtn){
-                songBtn.setToggleGroup(songButtonsGroup);
-            }
-             */
+            songs.clear();
         });
 
         List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);
-
-        carpeta = null;
-        selectedDirectory = null;
 
         Task<Void> loadSongsTask = new Task<>() {
             @Override
@@ -380,7 +384,7 @@ public class Home extends Controller {
                                 ViewUtils::processThumbPath
                         );
                         Platform.runLater(()-> {
-                            playlist.getItems().add(songData);
+                            songs.add(songData);
                         });
                     } catch (Exception _) {}
                 }
@@ -390,8 +394,6 @@ public class Home extends Controller {
 
         loadSongsTask.setOnFailed(e -> {
             playlist.getItems().clear();
-            //Label error = new Label("Error al cargar audios");
-            //playList.getChildren().add(error);
             loadSongsTask.getException().printStackTrace();
         });
 
@@ -421,5 +423,53 @@ public class Home extends Controller {
     @FXML
     public void onCloseBtnAction(ActionEvent actionEvent) {
         stage.close();
+    }
+
+    @FXML
+    public void onActionPrevious(ActionEvent actionEvent) {
+        if(previousSong()){
+            playlist.scrollTo(playlist.getSelectionModel().getSelectedIndex());
+        }
+    }
+
+    public void onActionNext(ActionEvent actionEvent) {
+        if(nextSong()){
+            playlist.scrollTo(playlist.getSelectionModel().getSelectedIndex());
+        };
+    }
+
+
+    public boolean previousSong(){
+        if(songs.isEmpty()) return false;
+        int index = currentSongIndex.get();
+        if (index > 0) --index;
+        else index = songs.size()-1;
+        currentSongIndex.set(index);
+        playlist.getSelectionModel().select(index);
+        return true;
+    }
+    public boolean nextSong(){
+        if(songs.isEmpty()) return false;
+        int index = currentSongIndex.get() + 1;
+        if (index >= songs.size()) index = 0;
+        currentSongIndex.set(index);
+        playlist.getSelectionModel().select(index);
+        return true;
+    }
+
+    public void repeatSong(){
+        if(
+                currentSong.status().state() == State.NOTHING_SPECIAL || currentSong.status().state() == State.STOPPED
+        ){}
+    }
+
+    public void toggleSong(){
+        switch (loopBtn.getState()){
+            case LOOP_ALL -> nextSong();
+            case LOOP_ONE -> repeatSong();
+            case NO_LOOP -> {
+                if(currentSongIndex.get() < songs.size()-1) nextSong();
+            }
+        }
     }
 }

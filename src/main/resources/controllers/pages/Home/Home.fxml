@@ -14,6 +14,8 @@
 <?import components.CustomListView?>
 <?import components.WrapperPlaylistListView?>
 <?import components.SongCard?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import components.TripleStateButton?>
 <VBox
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
@@ -29,6 +31,7 @@
         <URL value="@../../../utils/classes.css" />
         <URL value="@../../../themes/Theme1.css" />
         <URL value="@Home.css" />
+        <URL value="@Home-sup.css" />
     </stylesheets>
     <children>
         <SplitPane
@@ -51,41 +54,45 @@
                             <VBox
                                     styleClass="details"
                                     HBox.hgrow="ALWAYS">
-                                <VBox VBox.vgrow="ALWAYS" alignment="CENTER_LEFT">
+                                <VBox VBox.vgrow="ALWAYS" alignment="CENTER_LEFT" styleClass="details-name">
                                     <Label fx:id="songName" text="Song Name to long lorem ipsum x" wrapText="true"/>
                                     <Label fx:id="artistName" text="Artist" />
                                 </VBox>
                                 <HBox styleClass="timeAndButtons">
                                     <HBox styleClass="time">
-                                        <Label fx:id="currentTime" text="0:10" styleClass="tx-white-9" />
+                                        <Label fx:id="currentTime" text="00:00" styleClass="tx-white-9" />
                                         <Label text=" - " styleClass="tx-white-6" />
                                         <Label fx:id="totalTime"
-                                        text="1:00"
+                                        text="00:00"
                                         styleClass="tx-white-7"/>
                                     </HBox>
                                     <HBox styleClass="buttons">
-                                        <Button mnemonicParsing="false" fx:id="btnPrevious" prefWidth="20" prefHeight="20">
+                                        <Button mnemonicParsing="false" fx:id="btnPrevious" prefWidth="20" prefHeight="20" onAction="#onActionPrevious">
                                             <graphic>
-                                                <ImageView fx:id="imageBtnPrevious">
-                                                </ImageView>
+                                                <FontIcon iconLiteral="fas-step-backward" />
                                             </graphic>
                                         </Button>
                                         <Button mnemonicParsing="false" fx:id="pause" prefWidth="20" prefHeight="20" onAction="#onPauseAction">
                                             <graphic>
-                                                <ImageView fx:id="imagePause">
-                                                </ImageView>
+                                                <FontIcon iconLiteral="fas-play" />
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" fx:id="btnNext" prefWidth="20" prefHeight="20">
+                                        <Button mnemonicParsing="false" fx:id="btnNext" prefWidth="20" prefHeight="20" onAction="#onActionNext">
                                             <graphic>
-                                                <ImageView fx:id="imageBtnNext">
-                                                </ImageView>
+                                                <FontIcon  iconLiteral="fas-step-forward"/>
                                             </graphic>
                                         </Button>
+                                        <TripleStateButton mnemonicParsing="false" fx:id="loopBtn">
+                                            <graphic>
+                                                <FontIcon/>
+                                            </graphic>
+                                        </TripleStateButton>
                                     </HBox>
                                 </HBox>
-                                <PrettySlider fx:id="timeStatus" value="50" blockIncrement="0.01"/>
-                                <PrettySlider fx:id="volumeSlider" value="100"/>
+                                <VBox styleClass="sliders">
+                                    <PrettySlider fx:id="timeStatus" value="50" blockIncrement="0.01"/>
+                                    <PrettySlider fx:id="volumeSlider" value="50"/>
+                                </VBox>
                             </VBox>
                         </children>
                     </RelativeHBox>

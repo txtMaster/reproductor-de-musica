@@ -16,6 +16,17 @@
 }
 */
 .root{
+
+    size1:4px;
+    size1-rel: 0.2em;
+    size2-rel: 0.4em;
+    size3-rel: 0.6em;
+    size4-rel: 0.8em;
+    size5-rel: 1em;
+    size6-rel: 1.4em;
+    size7-rel: 1.8em;
+    size8-rel: 2em;
+
     main-color-saturated: hsb(20,18%,93%);
 
     main-color: hsb(0,0%,11%);
