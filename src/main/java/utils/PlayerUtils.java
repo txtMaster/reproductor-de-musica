@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.images.Artwork;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
-import uk.co.caprica.vlcj.player.base.State;
+import uk.co.caprica.vlcj.binding.internal.libvlc_state_t;
+import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -57,39 +57,40 @@ public class PlayerUtils {
 
 
     // la posicion representa el porcentaje del 0 al 100
-    public static void setRelativePosition(MediaPlayer mediaPlayer,double percentage){
+    public static void setRelativePosition(MediaPlayer mediaPlayer, double percentage){
         //si el audio termino reiniciar y pausar
-        if(mediaPlayer.status().state() == State.STOPPED){
-            mediaPlayer.controls().start();
-            mediaPlayer.controls().pause();
+        if(mediaPlayer.getMediaPlayerState() == libvlc_state_t.libvlc_Stopped){
+            mediaPlayer.start();
+            mediaPlayer.pause();
         }
-        mediaPlayer.controls().setPosition((float) (percentage / 100.0));
+        mediaPlayer.setPosition((float) (percentage / 100.0));
     }
     public static void togglePlaying(MediaPlayer mediaPlayer){
-        if(mediaPlayer.status().isPlaying()){
-            mediaPlayer.controls().pause();
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
         }
         else if(
-                mediaPlayer.media().info().state() == State.STOPPED && mediaPlayer.media().info().duration() == mediaPlayer.status().time()
+                mediaPlayer.getMediaPlayerState() == libvlc_state_t.libvlc_Stopped &&
+                        mediaPlayer.getLength() == mediaPlayer.getTime()
         ) {
-            mediaPlayer.controls().start();
+            mediaPlayer.start();
         }else{
-            mediaPlayer.controls().play();
+            mediaPlayer.play();
         }
     }
     public static void timeToInit(MediaPlayer mediaPlayer){
-        if(notEmpty(mediaPlayer))mediaPlayer.controls().setTime(0);
+        if(notEmpty(mediaPlayer))mediaPlayer.setTime(0);
     }
     public static void timeToEnd(MediaPlayer mediaPlayer){
         if(notEmpty(mediaPlayer))
-            mediaPlayer.controls().setTime(
+            mediaPlayer.setTime(
                     //enviar casi al ultimo para que no salga un error de buffer al intentar cargar el ultimo momento del archivo de golpe
                     PlayerUtils.getDuration(mediaPlayer) - 500
             );
     }
 
     public static boolean notEmpty(MediaPlayer mediaPlayer){
-        return mediaPlayer.status().state() != State.NOTHING_SPECIAL;
+        return mediaPlayer.getMediaPlayerState() != libvlc_state_t.libvlc_NothingSpecial;
     }
 
     public static void safeAction(MediaPlayer mediaPlayer, Consumer<MediaPlayer> callback){
@@ -100,9 +101,16 @@ public class PlayerUtils {
         else ifEmptyCallback.accept(mediaPlayer);
     }
     public static long getTime(MediaPlayer mediaPlayer){
-        return mediaPlayer.status().time();
+        return mediaPlayer.getTime();
     }
     public static long getDuration(MediaPlayer mediaPlayer){
-        return mediaPlayer.media().info().duration();
+        return mediaPlayer.getLength();
+    }
+
+    public static boolean isPlayable(MediaPlayer mp){
+        final libvlc_state_t state = mp.getMediaPlayerState();
+        return state != libvlc_state_t.libvlc_NothingSpecial
+                && state != libvlc_state_t.libvlc_Error
+                && state != libvlc_state_t.libvlc_Ended;
     }
 }

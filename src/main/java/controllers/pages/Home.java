@@ -24,14 +24,16 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import models.SongModel;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.base.State;
+
+import uk.co.caprica.vlcj.binding.internal.libvlc_state_t;
+import uk.co.caprica.vlcj.component.AudioMediaPlayerComponent;
+import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import utils.*;
 
 import java.io.File;
@@ -42,8 +44,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
 
-    public MediaPlayer currentSong;
-    public MediaPlayerFactory mediaPlayerFactory;
+    AudioMediaPlayerComponent mediaPlayerFactory = new AudioMediaPlayerComponent();
+    public MediaPlayer currentSong =  mediaPlayerFactory.getMediaPlayer();;
     public WrapperPlaylistListView playListContainer;
     public TripleStateButton loopBtn;
     public Button btnNext;
@@ -87,17 +89,14 @@ public class Home extends Controller {
     AtomicBoolean interactuandoConElSlider = new AtomicBoolean(false);
 
     public void playSong(SongData data){
-        currentSong.controls().stop();
+        currentSong.stop();
         currentSongModel.set(data);
         currentSongModel.calcImgPath();
-        currentSong.media().play(currentSongModel.getPath());
+        currentSong.playMedia(currentSongModel.getPath());
     }
 
     @FXML
     void initialize(){
-
-        mediaPlayerFactory = new MediaPlayerFactory("--no-video", "--no-xlib");;
-        currentSong = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
 
         songName.textProperty().bind(currentSongModel.titleProperty());
         artistName.textProperty().bind(currentSongModel.artistProperty());
@@ -155,19 +154,19 @@ public class Home extends Controller {
 
 
         volumeSlider.valueProperty().addListener((obs,pre,pos)->{
-            currentSong.audio().setVolume(pos.intValue());
+            currentSong.setVolume(pos.intValue());
         });
 
         loopBtn.onChangeState = e->{
-            currentSong.controls().setRepeat(e == LoopMode.LOOP_ONE);
+            currentSong.setRepeat(e == LoopMode.LOOP_ONE);
         };
 
-        currentSong.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
+        currentSong.addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
 
             @Override
             public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
                 super.audioDeviceChanged(mediaPlayer, audioDevice);
-                mediaPlayer.audio().setVolume((int)volumeSlider.getValue());
+                mediaPlayer.setVolume((int)volumeSlider.getValue());
             }
 
             @Override
@@ -261,7 +260,7 @@ public class Home extends Controller {
                 if(
                         progress.get() == timeStatus.getValue()
                                 ||
-                                currentSong.status().state() == State.NOTHING_SPECIAL
+                                currentSong.getMediaPlayerState() == libvlc_state_t.libvlc_NothingSpecial
                 ) return;
                 PlayerUtils.setRelativePosition(currentSong,timeStatus.getValue());
 
@@ -320,7 +319,7 @@ public class Home extends Controller {
                 default -> toConsume = false;
             };
             if(toConsume)e.consume();
-            if (skipTime == 0 || !currentSong.status().isPlayable())return;
+            if (skipTime == 0 || !PlayerUtils.isPlayable(currentSong))return;
 
             interactuandoConElSlider.set(true);
 
@@ -341,13 +340,13 @@ public class Home extends Controller {
                         }
                     );
                 case HOME -> PlayerUtils.safeAction(currentSong,(mp)->{
-                    if(mp.status().time() >= 5000)PlayerUtils.timeToInit(mp);
+                    if(mp.getTime() >= 5000)PlayerUtils.timeToInit(mp);
                     else previousSong(true);
                 });
                 case END -> PlayerUtils.safeAction(currentSong,
                         (mp)->nextSong(true));
                 case LEFT,RIGHT -> {
-                    currentSong.controls().skipTime(skipTime);
+                    currentSong.setTime( currentSong.getTime() + skipTime);
                     currentTime.setText(
                             FormatUtils.msToString(
                                     PlayerUtils.getTime(currentSong)
@@ -416,17 +415,15 @@ public class Home extends Controller {
         thread.start();
     }
 
-    @Override
-    public void onClose(){
+    public void onClose(WindowEvent e){
+        super.onClose(e);
         if (currentSong != null) {
-            currentSong.controls().stop();
+            currentSong.stop();
             currentSong.release();
         }
         if (mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
         }
-        Platform.exit();
-        System.exit(0);
     }
 
     @FXML
@@ -436,6 +433,13 @@ public class Home extends Controller {
 
     @FXML
     public void onCloseBtnAction(ActionEvent actionEvent) {
+        if (currentSong != null) {
+            currentSong.stop();
+            currentSong.release();
+        }
+        if (mediaPlayerFactory != null) {
+            mediaPlayerFactory.release();
+        }
         stage.close();
     }
 

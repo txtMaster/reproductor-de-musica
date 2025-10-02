@@ -36,9 +36,7 @@
     -fx-spacing:1em;
 }
 
-.buttons .ikonli-font-icon{
-    -fx-icon-color: main-color-lighten-9;
-    -fx-icon-size:16px;
+.buttons{
 }
 
 .buttons .button{
@@ -49,13 +47,10 @@
     -fx-min-width: 24px;
     -fx-background-color:transparent;
     -fx-background:transparent;
+    -fx-text-fill: main-color-lighten-9;
 }
-.button#pause .ikonli-font-icon{
-    -fx-icon-code: fas-play;
-}
-.button#pause.playing .ikonli-font-icon{
-    -fx-icon-code: fas-pause;
-}
+.button#pause{}
+.button#pause.playing{}
 
 #totalTime{
     -fx-font-color:green;
@@ -147,15 +142,13 @@ Button.pause{
 }
 
 
-#loopBtn .ikonli-font-icon{
-    -fx-icon-size: 22px;
+#loopBtn{
+
 }
-#loopBtn,#loopBtn.no-loop .ikonli-font-icon{
-    -fx-icon-code: mdoal-arrow_right_alt;
+#loopBtn,
+#loopBtn.no-loop{
 }
-#loopBtn.loop-one .ikonli-font-icon{
-    -fx-icon-code: mdomz-repeat_one;
+#loopBtn.loop-one{
 }
-#loopBtn.loop-all .ikonli-font-icon{
-    -fx-icon-code: mdomz-repeat;
+#loopBtn.loop-all{
 }

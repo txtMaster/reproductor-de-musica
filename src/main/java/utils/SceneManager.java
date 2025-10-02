@@ -1,6 +1,7 @@
 package utils;
 
 import controllers.Controller;
+import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
@@ -54,7 +55,11 @@ public class SceneManager {
         Controller controller = loader.getController();
         controller.setStage(stage);
         controller.onStageAssigned(stage);
-        stage.setOnCloseRequest(event->controller.onClose());
+        stage.setOnCloseRequest(event->{
+            controller.onClose(event);
+            Platform.exit();
+            System.exit(0);
+        });
         return new Scene(rootView);
 
     }

@@ -1,4 +1,11 @@
 target/
+\\**
+/javafx-runtime/
+log.txt
+logs/**
+vlc/**
+
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
