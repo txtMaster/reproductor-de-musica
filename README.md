@@ -2,10 +2,9 @@
     Reproductor de musica offline
 </h1>
 
-
-<div style="display: flex; justify-content: center; align-items: center;">
-<img src="preview-1.png" alt="preview" height="300">
-</div>
+<p align="center">
+  <img src="preview-1.png" alt="preview" height="300">
+</p>
 
 ## Características
 
