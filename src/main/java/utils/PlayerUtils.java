@@ -65,17 +65,22 @@ public class PlayerUtils {
         }
         mediaPlayer.setPosition((float) (percentage / 100.0));
     }
-    public static void togglePlaying(MediaPlayer mediaPlayer){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
+    public static void togglePlaying(MediaPlayer mp){
+        System.out.println("toogle: "+ mp);
+        System.out.println("isPlaying: "+mp.isPlaying());
+        System.out.println("state: "+mp.getMediaPlayerState());
+        System.out.println("length: "+mp.getLength());
+        System.out.println("time: "+mp.getTime());
+        if(mp.isPlaying()){
+            mp.pause();
         }
         else if(
-                mediaPlayer.getMediaPlayerState() == libvlc_state_t.libvlc_Stopped &&
-                        mediaPlayer.getLength() == mediaPlayer.getTime()
+                mp.getMediaPlayerState() == libvlc_state_t.libvlc_Stopped &&
+                        mp.getLength() == mp.getTime()
         ) {
-            mediaPlayer.start();
+            mp.start();
         }else{
-            mediaPlayer.play();
+            mp.play();
         }
     }
     public static void timeToInit(MediaPlayer mediaPlayer){

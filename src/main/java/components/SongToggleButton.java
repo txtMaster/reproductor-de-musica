@@ -1,20 +1,16 @@
 package components;
 
 import datas.SongData;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import utils.Component;
+import utils.ComponentUtils;
 
 public class SongToggleButton extends ToggleButton {
 
-    static final String fxmlPath = Component.fxmlPath(SongToggleButton.class);
+    static final String fxmlPath = ComponentUtils.fxmlPath(SongToggleButton.class);
     public SongToggleButton(){
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
     }
     public SongData getData(){return this.songCard.getData();}
     public void setData(SongData data){this.songCard.setData(data);}

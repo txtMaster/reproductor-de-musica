@@ -18,6 +18,11 @@
 .root{
 
     size1:4px;
+    size2:8px;
+    size3:10px;
+    size4:12px;
+
+
     size1-rel: 0.2em;
     size2-rel: 0.4em;
     size3-rel: 0.6em;

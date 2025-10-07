@@ -4,7 +4,7 @@ target/
 log.txt
 logs/**
 vlc/**
-
+config.properties
 
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

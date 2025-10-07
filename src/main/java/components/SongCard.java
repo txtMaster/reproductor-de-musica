@@ -9,15 +9,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import utils.Component;
+import utils.ComponentUtils;
 import utils.FormatUtils;
 import utils.ThumbCache;
 import utils.ViewUtils;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public class SongCard extends HBox {
-    static final String fxmlPath = Component.fxmlPath(SongCard.class);
+    static final String fxmlPath = ComponentUtils.fxmlPath(SongCard.class);
 
     private SongData data = null;
     private ThumbCache imgCache;
@@ -28,7 +26,7 @@ public class SongCard extends HBox {
 
     public SongCard(){
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
     }
 
     public String getTitle(){return title.getText();}

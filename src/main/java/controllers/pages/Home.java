@@ -35,6 +35,7 @@ import uk.co.caprica.vlcj.component.AudioMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import utils.*;
+import utils.path.View;
 
 import java.io.File;
 import java.util.List;
@@ -44,8 +45,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
 
-    AudioMediaPlayerComponent mediaPlayerFactory = new AudioMediaPlayerComponent();
-    public MediaPlayer currentSong =  mediaPlayerFactory.getMediaPlayer();;
+    {
+        MAIN_TITLE = "home";
+    }
+
+    AudioMediaPlayerComponent mediaPlayerFactory;
+    public MediaPlayer currentSong;
     public WrapperPlaylistListView playListContainer;
     public TripleStateButton loopBtn;
     public Button btnNext;
@@ -81,6 +86,8 @@ public class Home extends Controller {
     public SongModel currentSongModel = new SongModel();
     public ObservableList<SongData> songs = FXCollections.observableArrayList();
     AtomicInteger currentSongIndex = new AtomicInteger(0);
+    AtomicReference<Double> progress = new AtomicReference<>((double) 0);
+    Timeline progressUpdater;
 
     ThumbCache imageCache = new ThumbCache();
 
@@ -95,8 +102,104 @@ public class Home extends Controller {
         currentSong.playMedia(currentSongModel.getPath());
     }
 
+    public void openConfigModal(){
+        SceneManager.openModal(View.CONFIGURATION,(event,controller)->{
+            System.out.println("modal cerrado");
+            System.out.println("lib cargada, intentando obtener player");
+            mediaPlayerFactory = PlayerManager.getMediaPlayerFactory();
+            loadCurrentSong();
+            System.out.println(mediaPlayerFactory);
+        });
+    }
+
+    public void loadCurrentSong(){
+        if(mediaPlayerFactory == null) return;
+        currentSong = mediaPlayerFactory.getMediaPlayer();
+        currentSong.addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
+
+            @Override
+            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
+                super.audioDeviceChanged(mediaPlayer, audioDevice);
+                mediaPlayer.setVolume((int)volumeSlider.getValue());
+            }
+
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                super.error(mediaPlayer);
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
+            }
+
+            @Override
+            public void paused(MediaPlayer mediaPlayer) {
+                super.paused(mediaPlayer);
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
+            }
+
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                super.stopped(mediaPlayer);
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                });
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                super.finished(mediaPlayer);
+
+                Platform.runLater(()->{
+                    pause.getStyleClass().remove("playing");
+                    toggleSong();
+                });
+            }
+
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                super.playing(mediaPlayer);
+                Platform.runLater(()->{
+                    pause.getStyleClass().add("playing");
+                });
+            }
+
+            @Override
+            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+                super.lengthChanged(mediaPlayer, newLength);
+                Platform.runLater(()->{
+                    currentSongModel.setDuration((int)newLength);
+                });
+            }
+        });
+        Timeline progressUpdater = new Timeline(
+                new KeyFrame(Duration.millis(500), e -> {
+
+                    if(interactuandoConElSlider.get()) return;
+
+                    PlayerUtils.safeAction(currentSong,ms->{
+                        long currentsMs = PlayerUtils.getTime(currentSong);
+                        long totalMs = PlayerUtils.getDuration(currentSong);
+
+                        progress.set((double) currentsMs / totalMs * 100);
+                        timeStatus.setValue(progress.get());
+                        currentTime.setText(
+                                FormatUtils.msToString(currentsMs)
+                        );
+                    });
+                })
+        );
+        progressUpdater.setCycleCount(Animation.INDEFINITE);
+        progressUpdater.play();
+
+    }
+
     @FXML
     void initialize(){
+        PlayerManager.tryLoadVLC();
+        mediaPlayerFactory = PlayerManager.getMediaPlayerFactory();
+        if(mediaPlayerFactory != null) loadCurrentSong();
 
         songName.textProperty().bind(currentSongModel.titleProperty());
         artistName.textProperty().bind(currentSongModel.artistProperty());
@@ -161,90 +264,11 @@ public class Home extends Controller {
             currentSong.setRepeat(e == LoopMode.LOOP_ONE);
         };
 
-        currentSong.addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
-
-            @Override
-            public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
-                super.audioDeviceChanged(mediaPlayer, audioDevice);
-                mediaPlayer.setVolume((int)volumeSlider.getValue());
-            }
-
-            @Override
-            public void error(MediaPlayer mediaPlayer) {
-                super.error(mediaPlayer);
-                Platform.runLater(()->{
-                    pause.getStyleClass().remove("playing");
-                });
-            }
-
-            @Override
-            public void paused(MediaPlayer mediaPlayer) {
-                super.paused(mediaPlayer);
-                Platform.runLater(()->{
-                    pause.getStyleClass().remove("playing");
-                });
-            }
-
-            @Override
-            public void stopped(MediaPlayer mediaPlayer) {
-                super.stopped(mediaPlayer);
-                Platform.runLater(()->{
-                    pause.getStyleClass().remove("playing");
-                });
-            }
-
-            @Override
-            public void finished(MediaPlayer mediaPlayer) {
-                super.finished(mediaPlayer);
-
-                Platform.runLater(()->{
-                    pause.getStyleClass().remove("playing");
-                    toggleSong();
-                });
-            }
-
-            @Override
-            public void playing(MediaPlayer mediaPlayer) {
-                super.playing(mediaPlayer);
-                Platform.runLater(()->{
-                    pause.getStyleClass().add("playing");
-                });
-            }
-
-            @Override
-            public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-                super.lengthChanged(mediaPlayer, newLength);
-                Platform.runLater(()->{
-                    currentSongModel.setDuration((int)newLength);
-                });
-            }
-        });
-
 
         coverRectangleClip.widthProperty().bind(cover.widthProperty());
         coverRectangleClip.heightProperty().bind(cover.heightProperty());
         cover.heightProperty().addListener((obs,prev,next)->{
         });
-        AtomicReference<Double> progress = new AtomicReference<>((double) 0);
-        Timeline progressUpdater = new Timeline(
-                new KeyFrame(Duration.millis(500), e -> {
-
-                    if(interactuandoConElSlider.get()) return;
-
-                    PlayerUtils.safeAction(currentSong,ms->{
-                        long currentsMs = PlayerUtils.getTime(currentSong);
-                        long totalMs = PlayerUtils.getDuration(currentSong);
-
-                        progress.set((double) currentsMs / totalMs * 100);
-                        timeStatus.setValue(progress.get());
-                        currentTime.setText(
-                                FormatUtils.msToString(currentsMs)
-                        );
-                    });
-                })
-        );
-        progressUpdater.setCycleCount(Animation.INDEFINITE);
-        progressUpdater.play();
 
         timeStatus.setOnMousePressed(e-> {
             interactuandoConElSlider.set(true);
@@ -330,6 +354,7 @@ public class Home extends Controller {
             timeStatus.setValue(newPercentage);
         });
         shortcuts.actions.put(KeyEvent.KEY_RELEASED,(e)->{
+            System.out.println(this.currentSong);
             boolean toConsume = true;
             switch (e.getCode()){
                 case SPACE -> PlayerUtils.safeAction(
@@ -369,6 +394,11 @@ public class Home extends Controller {
     @FXML
     public void onActionAbrirCarpeta(ActionEvent actionEvent) {
         if(!abrirCarpeta.isSelected()) return;
+        if(mediaPlayerFactory == null || currentSong == null){
+            System.out.println("abriendo modal");
+            openConfigModal();
+            return;
+        }
         DirectoryChooser carpeta = new DirectoryChooser();
         carpeta.setTitle("seleccione la carpeta con archivos de audio");
 
@@ -417,13 +447,6 @@ public class Home extends Controller {
 
     public void onClose(WindowEvent e){
         super.onClose(e);
-        if (currentSong != null) {
-            currentSong.stop();
-            currentSong.release();
-        }
-        if (mediaPlayerFactory != null) {
-            mediaPlayerFactory.release();
-        }
     }
 
     @FXML
@@ -433,6 +456,9 @@ public class Home extends Controller {
 
     @FXML
     public void onCloseBtnAction(ActionEvent actionEvent) {
+        if(progressUpdater != null){
+            progressUpdater.stop();
+        }
         if (currentSong != null) {
             currentSong.stop();
             currentSong.release();
@@ -440,7 +466,7 @@ public class Home extends Controller {
         if (mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
         }
-        stage.close();
+        close();
     }
 
     @FXML

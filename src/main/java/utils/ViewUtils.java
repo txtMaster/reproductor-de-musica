@@ -100,7 +100,6 @@ public class ViewUtils {
         stage.initStyle(StageStyle.TRANSPARENT);
         scene.setFill(Color.TRANSPARENT);
 
-
         Rectangle clip = new Rectangle(0,0);
         clip.widthProperty().bind(stage.widthProperty());
         clip.heightProperty().bind(stage.heightProperty());

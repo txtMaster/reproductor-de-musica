@@ -4,11 +4,11 @@ import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.layout.HBox;
 import utils.Calcs;
-import utils.Component;
+import utils.ComponentUtils;
 
 public class RelativeHBox extends HBox {
 
-    public static final String fxmlPath = Component.fxmlPath(RelativeHBox.class);
+    public static final String fxmlPath = ComponentUtils.fxmlPath(RelativeHBox.class);
 
 
     private final FloatProperty min = new SimpleFloatProperty(6f);
@@ -49,7 +49,7 @@ public class RelativeHBox extends HBox {
 
     public RelativeHBox(){
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
         this.heightProperty().addListener((obs,oldVal,newVal) -> {
             double fontSize = Calcs.clamp(
                     this.getMin(),

@@ -3,14 +3,16 @@ package components;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Slider;
-import utils.Component;
+import utils.ComponentUtils;
+
+import static java.lang.Double.NaN;
 
 public class PrettySlider extends Slider {
-    public static String fxmlPath = Component.fxmlPath(PrettySlider.class);
+    public static String fxmlPath = ComponentUtils.fxmlPath(PrettySlider.class);
 
     public PrettySlider(){
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
         initTrackBinding();
     }
 
@@ -32,6 +34,7 @@ public class PrettySlider extends Slider {
 
         double percent = (value - getMin()) / (getMax() - getMin());
         double clamped = Math.max(0, Math.min(1, percent)) * 100;
+        if(Double.isNaN(clamped))return;
 
         track.setStyle(
                 "-fx-background-color: linear-gradient(to right, main-color " + clamped + "%, bg-color " + clamped + "%);"

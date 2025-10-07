@@ -1,15 +1,15 @@
 package components;
 
 import javafx.scene.layout.StackPane;
-import utils.Component;
+import utils.ComponentUtils;
 
 public class SquareStackPane extends StackPane {
 
-    static final String fxmlPath = Component.fxmlPath(SquareStackPane.class);
+    static final String fxmlPath = ComponentUtils.fxmlPath(SquareStackPane.class);
 
     public SquareStackPane() {
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
         prefWidthProperty().bind(heightProperty());
     }
 }

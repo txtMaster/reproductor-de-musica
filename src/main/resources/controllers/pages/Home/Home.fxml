@@ -15,6 +15,9 @@
 <?import components.WrapperPlaylistListView?>
 <?import components.SongCard?>
 <?import components.TripleStateButton?>
+<?import components.SVGUrl?>
+<?import components.ButtonIcon?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
@@ -30,7 +33,6 @@
         <URL value="@../../../utils/classes.css" />
         <URL value="@../../../themes/Theme1.css" />
         <URL value="@Home.css" />
-        <URL value="@Home-sup.css" />
     </stylesheets>
     <children>
         <SplitPane
@@ -40,6 +42,9 @@
                 orientation="VERTICAL">
             <items>
                 <StackPane styleClass="wrapper-superior">
+                    <stylesheets>
+                        <URL value="@Home-sup.css" />
+                    </stylesheets>
                     <RelativeHBox fx:id="player" min="0" max="20">
                         <children>
                             <SquareStackPane fx:id="cover">
@@ -66,18 +71,22 @@
                                         styleClass="tx-white-7"/>
                                     </HBox>
                                     <HBox styleClass="buttons">
-                                        <Button mnemonicParsing="false" fx:id="btnPrevious" prefWidth="20" text="prev"
-                                                prefHeight="20" onAction="#onActionPrevious"/>
-                                        <Button fx:id="pause"
-                                                mnemonicParsing="false"
-                                                prefWidth="20" prefHeight="20"
-                                                text="play"
-                                                onAction="#onPauseAction"/>
-                                        <Button mnemonicParsing="false" fx:id="btnNext" prefWidth="20" prefHeight="20" onAction="#onActionNext" text="next">
+                                        <Button
+                                        fx:id="btnPrevious" onAction="#onActionPrevious">
+                                            <graphic><FontIcon/></graphic>
                                         </Button>
-                                        <TripleStateButton mnemonicParsing="false" fx:id="loopBtn" text="loop">
-                                            <graphic>
-                                            </graphic>
+                                        <Button
+                                        fx:id="pause"
+                                        onAction="#onPauseAction">
+                                            <graphic><FontIcon/></graphic>
+                                        </Button>
+                                        <Button
+                                        fx:id="btnNext"
+                                        onAction="#onActionNext">
+                                            <graphic><FontIcon/></graphic>
+                                        </Button>
+                                        <TripleStateButton mnemonicParsing="false" fx:id="loopBtn">
+                                            <graphic><FontIcon/></graphic>
                                         </TripleStateButton>
                                     </HBox>
                                 </HBox>

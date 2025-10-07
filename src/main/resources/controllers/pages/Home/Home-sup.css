@@ -35,44 +35,17 @@
     -fx-alignment:center;
     -fx-spacing:1em;
 }
-
-.buttons{
-}
-
-.buttons .button{
-    -fx-content-display:center;
-    -fx-min-height: 20px;
-    -fx-pref-height: 20px;
-    -fx-pref-width: 24px;
-    -fx-min-width: 24px;
-    -fx-background-color:transparent;
-    -fx-background:transparent;
-    -fx-text-fill: main-color-lighten-9;
-}
-.button#pause{}
-.button#pause.playing{}
-
-#totalTime{
-    -fx-font-color:green;
-}
-#currentTime{
-
-}
-
 .details{
     -fx-spacing: size2-rel;
 }
 
-.details-name{
-}
-
 .details .sliders{
     -fx-alignment:center;
-    -fx-spacing: size3-rel;
+    -fx-spacing: size1;
 }
 
 .sliders .pretty-slider{
-    main-size: size2-rel;
+    main-size: size1;
     -fx-padding:0;
     -fx-margin:0;
 }
@@ -114,41 +87,65 @@
     -fx-scale-x:1.1;
 }
 
-Button.pause{
+.button.pause{
     -fx-background-color:main-color-saturated;
     -fx-text-fill: main-color-lighten-3;
     -fx-font-size:1.5em;
     -fx-border-width:0;
 }
 
-#imageBtnPrevious,#imageBtnNext,#imagePause{
+.buttons{
+}
+.buttons .button{
+    -fx-content-display:center;
+    -fx-background-color:transparent;
+    -fx-background:transparent;
+    -fx-text-fill: main-color-lighten-9;
+    -fx-min-height:20px;
+    -fx-max-height:2em;
+}
+
+.button:hover{
+    -fx-background-color: main-color-lighten-4 !important;
+}
+
+.ikonli-font-icon{
+    -fx-icon-color:main-color-lighten-8;
+    -fx-font-size: 1.5em;
+    -fx-icon-size: 1em;
+}
+
+#btnPrevious .ikonli-font-icon{
+    -fx-icon-code:mdsmz-skip_previous;
+}
+#btnNext .ikonli-font-icon{
+    -fx-icon-code:mdsmz-skip_next;
+}
+#loopBtn .ikonli-font-icon,
+#loopBtn.no-loop .ikonli-font-icon{
+    -fx-icon-code:mdal-arrow_right_alt;
+}
+#loopBtn.loop-all .ikonli-font-icon{
+    -fx-icon-code:mdsmz-repeat;
+}
+#loopBtn.loop-one .ikonli-font-icon{
+    -fx-icon-code:mdsmz-repeat_one;
+}
+
+
+#pause .ikonli-font-icon{
+    -fx-icon-code:mdmz-play_arrow;
+}
+#pause.playing .ikonli-font-icon{
+    -fx-icon-code:mdmz-pause;
+}
+
+#test{
     -fx-preserve-ratio:true;
-    -fx-fit-width:3em;
-    -fx-smooth:true;
+    -fx-image: url(../../../png/pause.png);
 }
 
-#imageBtnPrevious{
-    -fx-image:url(../../../png/next.png);
-    -fx-rotate:180;
-}
-#imageBtnNext{
-    -fx-image:url(../../../png/next.png);
-}
-#imagePause{
-    -fx-image:url(../../../png/play.png);
-}
-#pause.playing #imagePause{
-    -fx-image:url(../../../png/pause.png) !important;
-}
-
-
-#loopBtn{
-
-}
-#loopBtn,
-#loopBtn.no-loop{
-}
-#loopBtn.loop-one{
-}
-#loopBtn.loop-all{
+#pause .svg-url{
+    -fx-scale-y:1;
+    -fx-scale-x:1;
 }

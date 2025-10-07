@@ -10,5 +10,5 @@
 <fx:root type="SVGPath"
          xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         styleClass="svg-path">
+         styleClass="svg-url">
 </fx:root>

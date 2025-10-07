@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<VBox
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        styleClass="p4,page"
+        minHeight="200"
+        minWidth="450"
+        fx:id="root"
+        fx:controller="controllers.pages.Configuration">
+    <stylesheets>
+        <URL value="@../../../utils/reset.css" />
+        <URL value="@../../../utils/classes.css" />
+        <URL value="@../../../themes/Theme1.css" />
+        <URL value="@Configuration.css" />
+    </stylesheets>
+    <children>
+        <VBox styleClass="texts">
+            <Label text="No se encontro los archivos VLC del proyecto."/>
+            <Label text="Seleccione la carpeta de instalación de VLC" fx:id="messageLbl"/>
+        </VBox>
+        <HBox styleClass="dir">
+            <TextField text="C:/Program Files/VLC/" fx:id="dirField"  HBox.hgrow="ALWAYS"/>
+            <Button text="Buscar Carpeta" fx:id="searchDirBtn" onAction="#onOpenDirBtn"/>
+        </HBox>
+        <Button text="Validar carpeta" fx:id="checkVLC" onAction="#onCheckVLCAction"/>
+    </children>
+</VBox>

@@ -5,7 +5,8 @@ public enum View {
     HOME("/controllers/pages/Home/Home.fxml"),
     MAIN("/controllers/pages/Main/Main.fxml"),
     POPUP("/controllers/pages/PopUp/PopUp.fxml"),
-    TEST("/controllers/pages/TestView/TestView.fxml");
+    TEST("/controllers/pages/TestView/TestView.fxml"),
+    CONFIGURATION("/controllers/pages/Configuration/Configuration.fxml");
 
     private final String path;
 

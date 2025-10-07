@@ -7,18 +7,17 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Skin;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import utils.Component;
+import utils.ComponentUtils;
 
 public class CustomListView<T>  extends HBox {
-    public static final String fxmlPath = Component.fxmlPath(CustomListView.class);
+    public static final String fxmlPath = ComponentUtils.fxmlPath(CustomListView.class);
 
     @FXML private ScrollBar scroll;
     @FXML private ListView<T> listView;
 
     public CustomListView(){
         super();
-        Component.init(this,fxmlPath);
+        ComponentUtils.init(this,fxmlPath);
         scroll.setMin(0);
         scroll.setMax(1);
         scroll.setVisibleAmount(0.1);

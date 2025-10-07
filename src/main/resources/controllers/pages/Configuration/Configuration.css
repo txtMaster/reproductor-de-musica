@@ -1,0 +1,60 @@
+.root{
+    -fx-font-family:"Inter Regular";
+    -font-size:20px;
+    -fx-border-radius:0em;
+    -fx-background-color: main-color-lighten-1;
+    -fx-fill-width: true;
+    -fx-alignment:center;
+    -fx-spacing:1.5em;
+    -fx-padding:1em 2em;
+}
+.label{
+    -fx-text-fill:main-color-lighten-8;
+    -fx-font-size: 1em;
+}
+.button{
+    -fx-background-color: main-color-lighten-4;
+    -fx-text-fill:main-color-lighten-8;
+    -fx-background-radius: .5em;
+}
+.button:hover{
+    -fx-background-color: main-color-lighten-6;
+}
+
+#checkVLC{
+    -fx-background-color: main-color-lighten-5;
+    -fx-text-fill:main-color-lighten-9;
+    -fx-padding:.25em 1.5em;
+    -fx-font-size:1.2em;
+}
+
+#checkVLC:disabled{
+    -fx-background-color: main-color-lighten-1;
+    -fx-text-fill:main-color-lighten-9;
+    -fx-background-radius: .5em;
+}
+.dir{
+    -fx-padding: .5em 0;
+    -fx-spacing: .5em;
+}
+#dirField{
+    -fx-background-color: main-color-lighten-2;
+    -fx-text-fill: main-color-lighten-8;
+}
+
+#searchDirBtn{
+}
+.text-field{
+    -fx-background-radius: .5em;
+}
+.texts{
+    -fx-alignment:center;
+}
+
+.root.error #messageLbl{
+    -fx-text-fill: hsb(0,30%,80%);
+}
+
+.root.success #messageLbl{
+    -fx-text-fill: hsb(120,20%,80%);
+}
