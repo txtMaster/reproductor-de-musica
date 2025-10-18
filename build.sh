@@ -43,9 +43,6 @@ run() {
   fi
 }
 
-echo "Editar este script y personalize los directorios LIB y JMODS de javafx por los suyos propios"
-echo "...."
-echo "....."
 echo "!!!!!INICIANDO EMPAQUETACION!!!!!! usa el parametro --verbose o -v para ver los detalles"
 echo "..."
 
