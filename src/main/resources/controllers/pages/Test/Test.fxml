@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import components.PrettySlider?>
+<?import components.RelativeHBox?>
+<?import components.SquareStackPane?>
+<?import components.TripleStateButton?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import components.ToggleTabs?>
+<?import components.ToggleTab?>
+<?import components.WrapperPlaylistListView?>
+<VBox minHeight="-Infinity" minWidth="-Infinity" styleClass="p4" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.pages.Test">
+    <stylesheets>
+        <URL value="@../../../utils/reset.css" />
+        <URL value="@../../../utils/classes.css" />
+        <URL value="@../../../themes/Theme1.css" />
+        <URL value="@Test.css" />
+    </stylesheets>
+    <children>
+        <SplitPane dividerPositions="0.25" orientation="VERTICAL" prefHeight="200" VBox.vgrow="ALWAYS">
+            <items>
+                <StackPane styleClass="wrapper-superior">
+                    <stylesheets>
+                        <URL value="@Test-sup.css" />
+                    </stylesheets>
+                    <RelativeHBox fx:id="player" max="20" min="0">
+                        <children>
+                            <SquareStackPane fx:id="cover">
+                                <clip>
+                                    <Rectangle fx:id="coverRectangleClip" arcHeight="26" arcWidth="26" height="200" width="200" />
+                                </clip>
+                            </SquareStackPane>
+                            <VBox styleClass="details" HBox.hgrow="ALWAYS">
+                                <VBox alignment="CENTER_LEFT" styleClass="details-name" VBox.vgrow="ALWAYS">
+                                    <Label fx:id="songName" text="Song Name to long lorem ipsum x" wrapText="true" />
+                                    <Label fx:id="artistName" text="Artist" />
+                                </VBox>
+                                <HBox styleClass="timeAndButtons">
+                                    <HBox styleClass="time">
+                                        <Label fx:id="currentTime" styleClass="tx-white-9" text="00:00" />
+                                        <Label styleClass="tx-white-6" text=" - " />
+                                        <Label fx:id="totalTime" styleClass="tx-white-7" text="00:00" />
+                                    </HBox>
+                                    <HBox styleClass="buttons">
+                                        <Button fx:id="btnPrevious">
+                                            <graphic><FontIcon /></graphic>
+                                        </Button>
+                                        <Button fx:id="pause">
+                                            <graphic><FontIcon /></graphic>
+                                        </Button>
+                                        <Button fx:id="btnNext">
+                                            <graphic><FontIcon /></graphic>
+                                        </Button>
+                                        <TripleStateButton fx:id="loopBtn" mnemonicParsing="false">
+                                            <graphic><FontIcon /></graphic>
+                                        </TripleStateButton>
+                                    </HBox>
+                                </HBox>
+                                <VBox styleClass="sliders">
+                                    <PrettySlider fx:id="timeStatus" blockIncrement="0.01" value="50" />
+                                    <PrettySlider fx:id="volumeSlider" value="50" />
+                                </VBox>
+                            </VBox>
+                        </children>
+                    </RelativeHBox>
+                </StackPane>
+                <SplitPane styleClass="main" dividerPositions="0.25">
+                    <items>
+                        <StackPane styleClass="wrapper-izquierdo">
+                            <ScrollPane fx:id="secciones" fitToWidth="true" styleClass="p4,bg-white-1,rad4">
+                                <VBox fx:id="folders" styleClass="s3">
+
+                                    <children>
+
+                                        <Label styleClass="tx-white-7,tx-1,tx-w2" text="Carpetas" />
+
+
+
+                                        <VBox styleClass="bg-white-2,p3,rad3">
+                                            <Button
+                                                    fx:id="abrirCarpeta"
+                                                    text="Abrir Carpeta"
+                                                    styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left">
+                                            </Button>
+                                        </VBox>
+
+                                        <Label styleClass="tx-white-7,tx-1" text="Listas" />
+
+
+
+                                        <VBox styleClass="bg-white-2,p3,rad3">
+                                            <children>
+                                            <ToggleButton
+                                                    fx:id="inicioBtn"
+                                                    text="Inicio" toggleGroup="$grupoDeSecciones"
+                                                    styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"
+                                                    selected="true">
+                                                <toggleGroup>
+                                                    <ToggleGroup fx:id="grupoDeSecciones"/>
+                                                </toggleGroup>
+                                            </ToggleButton>
+                                            <ToggleButton
+                                                    fx:id="favoritosBtn"
+                                                    text="Favoritos" toggleGroup="$grupoDeSecciones"
+                                                    styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                            <ToggleButton
+                                                    fx:id="misListasBtn"
+                                                    text="Mis Listas" toggleGroup="$grupoDeSecciones"
+                                                    styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                            <ToggleButton
+                                                    fx:id="artistasBtn"
+                                                    text="Artistas"
+                                                    toggleGroup="$grupoDeSecciones"
+                                                    styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                            <ToggleButton text="Albums" fx:id="albumsBtn"       toggleGroup="$grupoDeSecciones"
+                                                          styleClass="rad3,bg-white-3,p4,rad1,tx-2,tx-w3,tx-left"/>
+                                            </children>
+                                        </VBox>
+                                        <VBox   fx:id="options"
+                                                VBox.vgrow="ALWAYS">
+                                            <Button text="MiniPlayer"/>
+                                            <Button fx:id="closeBtn" text="Close"/>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </ScrollPane>
+                        </StackPane>
+                        <StackPane styleClass="wrapper-derecho">
+
+                            <VBox fx:id="pestanas">
+                                <HBox spacing="10" styleClass="p4">
+                                    <Label styleClass="tx-white-7,tx-bold">
+                                        Order by :
+                                    </Label>
+                                    <Label styleClass="tx-white-8">Song</Label>
+                                    <Label styleClass="tx-white-8">
+                                        Artist
+                                    </Label>
+                                    <Label styleClass="tx-white-8">
+                                        Date
+                                    </Label>
+                                </HBox>
+
+                                <ToggleTabs
+                                togglegroup="$grupoDeSecciones"
+                                VBox.vgrow="ALWAYS">
+                                    <ToggleTab togglebutton="$inicioBtn">
+                                        <WrapperPlaylistListView
+                                                fx:id="playListContainer" HBox.hgrow="ALWAYS"/>
+                                    </ToggleTab>
+                                    <ToggleTab togglebutton="$favoritosBtn">
+                                        <WrapperPlaylistListView fx:id="playListFavoritos" HBox.hgrow="ALWAYS"/>
+                                    </ToggleTab>
+                                    <ToggleTab togglebutton="$misListasBtn">
+                                        <WrapperPlaylistListView fx:id="myPlaylists" HBox.hgrow="ALWAYS"/>
+                                    </ToggleTab>
+                                    <ToggleTab togglebutton="$artistasBtn">
+                                        <WrapperPlaylistListView fx:id="myArtists" HBox.hgrow="ALWAYS"/>
+                                    </ToggleTab>
+                                    <ToggleTab togglebutton="$albumsBtn">
+                                        <WrapperPlaylistListView fx:id="myAlbums" HBox.hgrow="ALWAYS"/>
+                                    </ToggleTab>
+
+                                </ToggleTabs>
+                            </VBox>
+                        </StackPane>
+                    </items>
+                </SplitPane>
+
+            </items>
+        </SplitPane>
+    </children>
+</VBox>

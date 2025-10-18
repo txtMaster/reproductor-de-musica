@@ -1,0 +1,6 @@
+ToogleTab{
+    -fx-opacity: 0;
+}
+ToggleTab.selected{
+    -fx-opacity: 1;
+}

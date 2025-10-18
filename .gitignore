@@ -5,6 +5,7 @@ log.txt
 logs/**
 vlc/**
 config.properties
+out/artifacts/**/*.jar
 
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

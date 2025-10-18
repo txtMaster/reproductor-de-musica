@@ -1,23 +1,35 @@
 set -e
 trap 'echo "❌ Error en la ejecución del script."; exit 1;' ERR
 
+# Variables por defecto
+VERBOSE=false
+PARAMS=()
+
+# Procesar argumentos
+for arg in "$@"; do
+  if [[ "$arg" == "--verbose" || "$arg" == "-v" ]]; then
+    VERBOSE=true
+  else
+    PARAMS+=("$arg")
+  fi
+done
+
+# Validar que queden exactamente 2 parámetros (excluyendo verbose)
+if [ "${#PARAMS[@]}" -ne 2 ]; then
+  echo "Uso: $0 [--verbose|-v] <ruta_javafx_mods> <ruta_lib>"
+  exit 1
+fi
+
+
+JAVAFX_LIB=$1
+JAVAFX_JMODS=$2
+
 # Configuraciones
 APP_NAME="DemoApp"
 MAIN_CLASS="libraries.demo.application.App"
 MAIN_JAR="Demo-1.0-SNAPSHOT.jar"
 JAVA_RUNTIME="javafx-runtime"
-LIB="$JAVAFX_HOME/lib/"
-JMODS="$JAVAFX_JMODS"
 DEST_DIR="dist"
-
-# ========================
-# Modo verbose
-# ========================
-VERBOSE=false
-
-if [[ "$1" == "--verbose" || "$1" == "-v" ]]; then
-  VERBOSE=true
-fi
 
 # ========================
 # Función para ejecutar comandos
@@ -55,7 +67,7 @@ run mvn dependency:copy-dependencies -DincludeScope=runtime
 echo "⚙️  Generando runtime personalizado..."
 run rm -rf "./$JAVA_RUNTIME"
 run jlink \
-  --module-path "$JMODS:$LIB" \
+  --module-path "$JAVAFX_JMODS:$JAVAFX_LIB" \
   --add-modules java.base,java.desktop,java.naming,java.logging,javafx.controls,javafx.fxml \
   --output $JAVA_RUNTIME \
   --strip-debug \

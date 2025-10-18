@@ -51,7 +51,7 @@
     -fx-fill:red;
 }
 
-#folders .toggle-button{
+#folders .toggle-button,#folders .button{
     -fx-pannable: false;
     -fx-text-fill: main-color-lighten-9;
     -fx-pref-width:Infinity;
@@ -60,7 +60,7 @@
     -fx-alignment:center-left;
 }
 
-#folders .toggle-button:selected{
+#folders .toggle-button:selected, #folders .button:pressed{
     -fx-background-color:main-color-lighten-4;
     -fx-font-family: "Inter Medium";
 }

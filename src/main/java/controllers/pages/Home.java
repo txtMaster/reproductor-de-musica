@@ -45,6 +45,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Home extends Controller {
 
+    public ToggleButton inicioBtn;
+
     {
         MAIN_TITLE = "home";
     }
@@ -75,7 +77,7 @@ public class Home extends Controller {
     @FXML public ScrollPane secciones;
     @FXML public ImageView testImage;
     @FXML public VBox pestanas;
-    @FXML public ToggleButton abrirCarpeta;
+    @FXML public Button abrirCarpeta;
     @FXML public Button pause;
     @FXML public ListView<SongData> playlist;
     @FXML public SquareStackPane squareCoverWrapper;
@@ -393,7 +395,6 @@ public class Home extends Controller {
 
     @FXML
     public void onActionAbrirCarpeta(ActionEvent actionEvent) {
-        if(!abrirCarpeta.isSelected()) return;
         if(mediaPlayerFactory == null || currentSong == null){
             System.out.println("abriendo modal");
             openConfigModal();
@@ -410,6 +411,7 @@ public class Home extends Controller {
             imageCache.clear();
             songs.clear();
             currentSongIndex.set(-1);
+            inicioBtn.setSelected(true);
         });
 
         List<File> fileAudios = ExplorerUtils.getAudios(selectedDirectory);

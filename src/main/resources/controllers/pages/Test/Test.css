@@ -1,0 +1,202 @@
+.root{
+    -fx-font-family:"Inter Regular";
+    -font-size:20px;
+    -fx-background-color:main-color;
+    -fx-border-radius:1em;
+    -fx-pref-height:550px;
+    -fx-pref-width:700px;
+    -fx-padding:8px;
+    -s-1:4px;
+    -s-2:8px;
+}
+
+#cover{
+    -fx-border-radius: 20px 20px 20px 20px;
+}
+
+#cover.test{
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: auto 100%;
+}
+
+#coverRectangleClip{
+    -width:20px !important;
+    -height:200px;
+}
+
+
+.main{
+    -fx-background-color: transparent;
+    -fx-view-order:1;
+    -fx-padding: 0;
+    -fx-spacing:0;
+}
+
+
+
+.list{
+    -fx-background:transparent;
+    -fx-background-color:main-color-darken-1;
+
+}
+.playing{
+    -fx-background-color:transparent;
+}
+#secciones{
+    -fx-border-radius:20px !important;
+}
+
+#secciones SVGUrl{
+    -fx-fill:red;
+}
+
+#folders .toggle-button,#folders .button{
+    -fx-pannable: false;
+    -fx-text-fill: main-color-lighten-9;
+    -fx-pref-width:Infinity;
+    -fx-background-color:transparent;
+    -fx-min-width:0;
+    -fx-alignment:center-left;
+}
+
+#folders .toggle-button:selected, #folders .button:pressed{
+    -fx-background-color:main-color-lighten-4;
+    -fx-font-family: "Inter Medium";
+}
+
+#options{
+    -fx-alignment:bottom_center;
+}
+#options .button{
+    -fx-alignment:bottom_left;
+    -fx-background-color:transparent;
+    -fx-max-width:Infinity;
+    -fx-text-fill: main-color-lighten-9;
+}
+.custom-list-view{
+    -fx-spacing:0;
+}
+.scroll-bar{
+    -fx-min-width:8px;
+}
+
+#playListContainer .list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-radius:20;
+}
+
+#playListContainer .list-view .cell{
+    -fx-padding: 2px 0px 2px 0px;
+    -fx-margin:0px;
+    -fx-background-color:transparent;
+}
+
+.songButton,.song-toggle-button{
+    /*-fx-background-radius:20;*/
+}
+.song-card{
+    -fx-alignment:center;
+    -fx-min-height:4em;
+    -fx-max-height:4em;
+    -fx-pref-height:4em;
+    -fx-border-insets:0;
+    fx-background-insets:0;
+    -fx-padding:0;
+
+    -fx-spacing:0em;
+    -fx-spacing:1em;
+
+    -fx-background-color:main-color-lighten-1;
+}
+
+
+
+.song-list-cell:filled:selected .song-card{
+    -fx-background-color:main-color-lighten-4;
+}
+
+.song-list-cell:hover .song-card{
+    -fx-background-color:main-color-lighten-2;
+}
+
+.song-card .duration-label{
+    -fx-text-fill:main-color-lighten-8;
+    -fx-padding:0 1em 0 0;
+}
+.song-card .artist-label{
+    -fx-text-fill:main-color-lighten-7;
+}
+.song-card .title-label{
+    -fx-text-fill:main-color-lighten-9;
+}
+.song-card .cover-stackpane{}
+.song-card .text-vbox{}
+
+
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent; /* fondo del scrollbar */
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-opacity: 1; /* controla visibilidad */
+}
+
+.scroll-bar:vertical{
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: main-color-lighten-4;
+    -fx-background-radius: 2em;
+    -fx-pref-height:2em;
+    -fx-min-height:2em;
+}
+/* Ocultar los botones de incremento/decremento (flechas) */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: "";
+    -fx-opacity: 0;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-pref-width:0;
+    -fx-pref-height:0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+}
+
+.ikonli-font-icon{
+    -fx-icon-size: 15px;
+    -fx-icon-color:white;
+}
+#sectionsStackPane{
+    -fx-background-color:red;
+}
+#playListFavoritos{
+    -fx-background-color:green;
+}
+#playListContainer{
+    -fx-background-color:orange;
+}
+
+#myArtists{
+    -fx-background-color:cyan;
+}
+#myArtists{
+    -fx-background-color:cyan;
+}
+
+#myPlaylists{
+    -fx-background-color:brown;
+}
+
+#myAlbums{
+    -fx-background-color:purple;
+}
