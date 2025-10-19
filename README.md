@@ -29,7 +29,7 @@
 mvn clean install
 ```
 
-#### 2. ejectuar
+#### 2. ejecutar
 ```bash
 mvn javafx:run
 ```
