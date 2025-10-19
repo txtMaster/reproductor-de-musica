@@ -16,13 +16,18 @@ done
 
 # Validar que queden exactamente 2 parámetros (excluyendo verbose)
 if [ "${#PARAMS[@]}" -ne 2 ]; then
-  echo "Uso: $0 [--verbose|-v] <ruta_javafx_mods> <ruta_lib>"
+  echo "Uso: $0 <ruta_javafx_mods> <ruta_javafx_sdk> [--verbose|-v]"
   exit 1
 fi
 
+JAVAFX_SDK=${PARAMS[0]}
+JAVAFX_JMODS=${PARAMS[1]}
 
-JAVAFX_LIB=$1
-JAVAFX_JMODS=$2
+if [ -d "$JAVAFX_SDK/lib" ]; then
+  JAVAFX_SDK="$JAVAFX_SDK/lib"
+else
+  JAVAFX_SDK="$JAVAFX_SDK"  # fallback
+fi
 
 # Configuraciones
 APP_NAME="DemoApp"
@@ -30,6 +35,12 @@ MAIN_CLASS="libraries.demo.application.App"
 MAIN_JAR="Demo-1.0-SNAPSHOT.jar"
 JAVA_RUNTIME="javafx-runtime"
 DEST_DIR="dist"
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  PATH_SEPARATOR=":"
+else
+  PATH_SEPARATOR=";"
+fi
 
 # ========================
 # Función para ejecutar comandos
@@ -43,7 +54,7 @@ run() {
   fi
 }
 
-echo "!!!!!INICIANDO EMPAQUETACION!!!!!! usa el parametro --verbose o -v para ver los detalles"
+echo "!!!!! INICIANDO EMPAQUETACIÓN !!!!!! Usa el parámetro --verbose o -v para ver los detalles"
 echo "..."
 
 # ========================
@@ -53,19 +64,20 @@ echo "🧹 Limpiando y compilando el proyecto..."
 run mvn clean package -Pprod
 
 # ========================
-# Copiar dependencias necesarias
+# 2. Copiar dependencias necesarias
 # ========================
 echo "📦 Copiando dependencias..."
 run mvn dependency:copy-dependencies -DincludeScope=runtime
 
 # ========================
-# Crear runtime con jlink
+# 3. Crear runtime con jlink
 # ========================
 echo "⚙️  Generando runtime personalizado..."
 run rm -rf "./$JAVA_RUNTIME"
+
 run jlink \
-  --module-path "$JAVAFX_JMODS:$JAVAFX_LIB" \
-  --add-modules java.base,java.desktop,java.naming,java.logging,javafx.controls,javafx.fxml \
+  --module-path "$JAVAFX_JMODS$PATH_SEPARATOR$JAVAFX_SDK" \
+  --add-modules javafx.controls,javafx.fxml,javafx.graphics,jdk.unsupported,java.desktop,java.logging,java.naming,java.base \
   --output $JAVA_RUNTIME \
   --strip-debug \
   --compress=2 \
@@ -73,26 +85,22 @@ run jlink \
   --no-man-pages
 
 # ========================
-# 6. Crear ejecutable con jpackage
+# 4. Crear ejecutable con jpackage
 # ========================
-
 echo "📦 Empaquetando aplicación..."
 
-run rm -rf "dist/$APP_NAME"
+run rm -rf "$DEST_DIR/$APP_NAME"
 
 run jpackage \
-    --type app-image \
-    --name "$APP_NAME" \
-    --input target \
-    --main-jar "$MAIN_JAR" \
-    --main-class "$MAIN_CLASS" \
-    --dest "$DEST_DIR" \
-    --runtime-image "$JAVA_RUNTIME" \
-    --app-version 1.0 \
-    --java-options "--enable-native-access=ALL-UNNAMED --enable-native-access=javafx.graphics"
+  --type app-image \
+  --name "$APP_NAME" \
+  --input target \
+  --main-jar "$MAIN_JAR" \
+  --main-class "$MAIN_CLASS" \
+  --dest "$DEST_DIR" \
+  --runtime-image "$JAVA_RUNTIME" \
+  --app-version 1.0 \
+  --java-options "--enable-native-access=ALL-UNNAMED --enable-native-access=javafx.graphics"
 
-
-
-# shellcheck disable=SC2028
-echo "✅ Proceso completado. Empaquetado en la carpeta  dist/$DIR"
-echo "Porfavor ejecutarlo desde dicha carpeta para que se genere la configuracion correctamente"
+echo "✅ Proceso completado. Ejecutable creado en: dist/$APP_NAME"
+echo "Ejecuta desde esa carpeta para probar tu aplicación."

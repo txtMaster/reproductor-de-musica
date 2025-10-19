@@ -6,6 +6,8 @@
   <img src="preview-1.png" alt="preview" height="300">
 </p>
 
+["preview"]()
+
 ## Características
 
 - Interfaz en JavaFX
@@ -19,26 +21,35 @@
 - VLC 3.x instalado o carpeta con las librerias de VLC.
 - Sistema Operativo Windows o Linux.
 
----
 
-## 📦 Requisitos para compilar
+### Ejecucion en entorno de desarrollo
 
-- Java 25 o superior
-- JavaFX 25 o superior
-- Jmods de JAVAFX
-- Maven
-
----
-
-## 🛠️ Compilación
-
-### 1. descarga las dependencias
+#### 1. descarga las dependencias
 ```bash
 mvn clean install
 ```
 
-### 2. ejecuta el script para empaquetar la app
+#### 2. ejectuar
 ```bash
-./build.sh
+mvn javafx:run
+```
+
+
+---
+
+## 🛠️ Empaquetacion
+
+### Requisitos
+- Java 25 o superior
+- Maven, JLink y JPackage
+- JavaFX 25 o superior
+- Jmods de JAVAFX
+
+### 1. ejecuta el script para empaquetar la app
+
+Especificar la ubicacion de los jmods de javafx y el sdk
+
+```bash
+./build.sh <ruta/a/tu/javafx_jmods/> <ruta/a/tu/javafx_sdk>
 ```
 
