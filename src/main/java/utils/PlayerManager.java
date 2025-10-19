@@ -66,8 +66,8 @@ public class PlayerManager {
                 System.out.println("La ruta proporcionada no es válida o no es un directorio: " + path);
                 return false;
             }
-            System.setProperty("jna.library.path", "vlc");
-            System.setProperty("VLC_PLUGIN_PATH","vlc"+File.separator+"plugins");
+            System.setProperty("jna.library.path", vlcDir.getAbsolutePath());
+            //System.setProperty("VLC_PLUGIN_PATH","vlc"+File.separator+"plugins");
 
             String vlcPath = System.getProperty("jna.library.path");
 
